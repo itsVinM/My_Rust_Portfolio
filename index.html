@@ -325,7 +325,6 @@
             <h3 class="font-semibold text-lg mb-2 text-white">About Me</h3>
             <p class="text-sm text-gray-200">
                 Adventure, reader and curious engineer, if I am not exploring with my motorbike for sure I am putting down some code or learnig something. 🚀
-                So far my experience was focused on Validation of components (mainly power electronics), ensuring conformity with International Standards through FMEAs and rigurous tests, but also aimed at develop the product further.
             </p>
         </div>
         
@@ -400,8 +399,14 @@
             </div>
             <p class="dock-icon-name">Projects</p>
         </div>
-
-    </div>
+        
+        <div class="dock-item" id="motor-dock-item">
+            <div class="dock-icon">
+                <img class="dock-icon-img" src="https://c8.alamy.com/comp/2B258CT/dc-motor-vector-icon-2B258CT.jpg">
+            </div>
+            <p class="dock-icon-name">Motor Sim</p>
+        </div>
+        </div>
 
     <div id="photo-modal" class="photo-modal" onclick="this.style.display='none'">
         <img id="modal-image" src="">
@@ -426,6 +431,7 @@
                 title: 'Work Experience',
                 content: `
                     <h1 class="text-2xl font-bold p-5">Work Experience</h1>
+    
                     <div class="photo-gallery">
                         <div class="photo-item" >
                             <img src="https://i.ytimg.com/vi/dAegKZf0Ou8/maxresdefault.jpg">
@@ -501,7 +507,6 @@
                         <div class="project-item">
                             <h5 class="font-semibold text-white text-lg">Simple project tracker web-based for automation and used in the production line</h5>
                             
-                            <!-- This entire image is now a clickable link to the live product. -->
                             <a href="https://itsVinM.github.io/Tracker/" target="_blank" rel="noopener noreferrer">
                                 <img src="https://github.com/user-attachments/assets/df129919-0dd1-4d48-9152-a2ea4b173b4f" alt="Screenshot of the simple project tracker app">
                             </a>
@@ -644,6 +649,79 @@
             document.getElementById('welcome-modal').style.display = 'none';
             openWindow('projects-window');
         });
+
+        // --- New code for motor simulation window ---
+        document.getElementById('motor-dock-item').addEventListener('click', () => {
+            // Check if the window already exists to prevent duplication
+            if (document.getElementById('motor-window')) {
+                openWindow('motor-window');
+                return;
+            }
+
+            // Create the new window structure
+            const motorWindow = document.createElement('div');
+            motorWindow.id = 'motor-window';
+            motorWindow.classList.add('window', 'absolute', 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2', 'w-full', 'h-full', 'max-w-xl', 'min-w-0');
+            motorWindow.style.minHeight = '600px';
+
+            const headerHtml = `
+                <div class="window-header">
+                    <div class="window-controls">
+                        <div class="window-close"></div>
+                        <div class="window-minimize"></div>
+                        <div class="window-maximize"></div>
+                    </div>
+                    <span class="window-title">DC Motor Simulation</span>
+                </div>
+            `;
+            
+            // The content will be loaded dynamically
+            const contentHtml = `<div id="motor-content" class="w-full h-full"></div>`;
+            motorWindow.innerHTML = headerHtml + contentHtml;
+            desktop.appendChild(motorWindow);
+
+            // Add draggability to the new window
+            makeDraggable(motorWindow.querySelector('.window-header'));
+
+            // Set up close functionality
+            motorWindow.querySelector('.window-close').addEventListener('click', () => {
+                closeWindow('motor-window');
+                // You may want to stop the simulation loop here
+            });
+            
+            // Set the window to be visible and at the front
+            openWindow('motor-window');
+
+            // Load the motor simulation HTML/CSS/JS dynamically
+            const motorContentDiv = document.getElementById('motor-content');
+            fetch('static/motor_simulation.html') // Assume the motor simulation is a separate HTML file
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Extract the body content from the fetched HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const bodyContent = doc.body.innerHTML;
+                    
+                    // Inject the content into the window
+                    motorContentDiv.innerHTML = bodyContent;
+                    
+                    // Manually execute the script from the fetched HTML
+                    const script = doc.querySelector('script').textContent;
+                    const scriptEl = document.createElement('script');
+                    scriptEl.textContent = script;
+                    document.body.appendChild(scriptEl);
+                })
+                .catch(error => {
+                    console.error('Failed to load motor simulation:', error);
+                    motorContentDiv.innerHTML = `<p>Error loading simulation. Please try again.</p>`;
+                });
+        });
+        // --- End of new code ---
     </script>
 </body>
 </html>

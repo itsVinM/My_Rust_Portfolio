@@ -25,15 +25,11 @@
             width: 100vw;
             height: 100vh;
             background-image: url('https://images.unsplash.com/photo-1750494733502-30427edd0efc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-            
+            background-size: cover;
             background-position: center;
         }
 
         .dock {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             padding: 8px 15px;
             background: rgba(43, 43, 43, 0.25);
             backdrop-filter: blur(20px);
@@ -54,6 +50,7 @@
         }
 
         .dock-icon {
+            position: relative;
             width: 50px;
             height: 50px;
             background-color: #555;
@@ -155,7 +152,7 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            color: rgb(6, 6, 6);
+            color: rgb(255, 255, 255);
             font-size: 14px;
             font-weight: 500;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -183,12 +180,12 @@
         .widget-feed {
             top: 50px;
             right: 50px;
-            width: 250px; 
+            width: 250px;
             color: rgb(245, 245, 245);
         }
         
         .widget-about-me {
-            top: 300px;
+            top: 320px;
             right: 50px;
             width: 250px;
             color: rgb(0, 0, 0);
@@ -200,14 +197,70 @@
             width: 250px;
             color: #ffffff;
         }
+        
+        .projects-widget {
+            position: absolute; /* Already in the code */
+            top: 360px;
+            left: 50px;
+            width: 250px;
+            color: #ffffff;
+            /* Added */
+            min-height: 200px; 
+            display: flex;
+            flex-direction: column;
+            cursor: grab;
+        }
 
-        .project-item {
-            background-color: rgba(0, 0, 0, 0.69);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .projects-widget .projects-header {
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .dock-window {
+            position: absolute;
+            top: 490px;
+            right: 50px;
+            width: 250px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
+        .dock-window .dock {
+            background: none;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            gap: 15px;
+        }
+        
+        .dock-window .dock-item {
+            gap: 5px;
+        }
+
+        .project-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .project-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         .photo-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -260,7 +313,6 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
-        /* Welcome Modal Styles */
         .welcome-modal {
             position: fixed;
             top: 0;
@@ -298,6 +350,33 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
+        /* New CSS for notification dot */
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff3b30;
+            border-radius: 50%;
+            border: 1px solid white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -305,37 +384,31 @@
     <div class="desktop">
         <div id="clock" class="clock"></div>
         
-        
         <div class="widget widget-feed text-white-800">
             <h2 class="text-lg font-bold mb-3">Activity Feed</h2>
-            
-            <div class="mb-4">
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
-                    <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
-                </div>
+            <div class="grid grid-cols-2 gap-2">
+                <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
+                <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
+            </div><br>
+            <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
             </div>
+
             
-            <div>
-                <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
-                    <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
-                </div>
-            </div>
         </div>
 
         <div class="widget widget-about-me text-white-800">
             <h3 class="font-semibold text-lg mb-2 text-white">About Me</h3>
             <p class="text-sm text-gray-200">
-                Adventure, reader and curious engineer in power electronics, if I am not travelling with my motorbike or by plane for sure I am coding something.🚀
+                Adventure, reader and curious engineer in power electronics, if I am not travelling with my motorbike or by plane for sure I am coding something 🚀
             </p>
         </div>
         
         <div class="widget widget-photo-memory">
-            <h2 class="text-lg font-bold mb-3">My Tools</h2>
-            <div class="grid grid-cols-4 gap-2">
+            <h1 class="text-lg font-bold mb-3">My Tools</h1>
+            <div class="grid grid-cols-4 gap-4">
                 <div class="flex flex-col items-center">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-12 h-12 object-contain rounded-md">
                     <p class="text-xs text-center mt-1">Rust</p>
@@ -347,6 +420,10 @@
                 <div class="flex flex-col items-center">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-12 h-12 object-contain rounded-md">
                     <p class="text-xs text-center mt-1">Python</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Javascript</p>
                 </div>
                 <div class="flex flex-col items-center">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-12 h-12 object-contain rounded-md">
@@ -381,27 +458,43 @@
             
             </div>
         </div>
-    </div>
 
-    <div class="dock">
-
-        <div class="dock-item" data-window-id="experience-window">
-            <div class="dock-icon">
-                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
+        <div id="projects-widget" class="widget projects-widget">
+            <div class="projects-header">
+                <h1 class="text-lg font-bold mb-3">Projects</h1>
             </div>
-            <p class="dock-icon-name">Experience</p>
+            <div class="project-grid grid grid-cols-2 gap-4">
+                <a href="https://itsVinM.github.io/Tracker/" target="_blank" rel="noopener noreferrer">
+                    <div class="project-item flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <img src="https://github.com/user-attachments/assets/df129919-0dd1-4d48-9152-a2ea4b173b4f" class="w-16 h-16 object-contain rounded-md mb-2">
+                        <p class="text-xs text-center text-white">Tracker App</p>
+                    </div>
+                </a>
+                <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
+                    <div class="project-item flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-16 h-16 object-contain rounded-md mb-2">
+                        <p class="text-xs text-center text-white">GameBoy Sim</p>
+                    </div>
+                </a>
+            </div>
         </div>
-        <div class="dock-item" data-window-id="contact-window">
-            <div class="dock-icon">
-                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
+        
+        <div class="dock-window">
+            <div class="dock">
+                <div class="dock-item" data-window-id="experience-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
+                    </div>
+                    <p class="dock-icon-name">Experience</p>
+                </div>
+                <div class="dock-item" data-window-id="contact-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
+                        <div class="notification-dot"></div>
+                    </div>
+                    <p class="dock-icon-name">Contacts</p>
+                </div>
             </div>
-            <p class="dock-icon-name">Contacts</p>
-        </div>
-        <div id="projects-dock-item" class="dock-item" data-window-id="projects-window">
-            <div class="dock-icon">
-                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png">
-            </div>
-            <p class="dock-icon-name">Projects</p>
         </div>
     </div>
 
@@ -412,10 +505,10 @@
     <div id="welcome-modal" class="welcome-modal">
         <div class="welcome-modal-content">
             <div class="welcome-modal-close" onclick="document.getElementById('welcome-modal').style.display='none';"></div>
-            <h1 class="text-3xl font-bold mb-4">Hello there, I am Vincentiu! 👋</h1>
+            <h1 class="text-3xl font-bold mb-4">Hi there! I'm Vincentiu 👋</h1>
             <p class="text-md">
-                It seems that you ended up in this portfolio that simulates a simple desktop environment, 
-                please explore it by opening the applications (working on more).🔥
+                Passionate Power Electronics Engineer that built this portfolio as a simple desktop environment to showcase my work. 
+                Go ahead and drag the windows around to explore my professional journey, from my projects to my work experience. 🔥
             </p>
         </div>
     </div>
@@ -494,32 +587,6 @@
                         </div>
                     </div>
                 `,
-            },
-            {
-                id: 'projects-window',
-                title: 'Projects',
-                content: `
-                    <div class="p-4">
-                        <div class="project-item">
-                            <h5 class="font-semibold text-white text-lg">Simple project tracker web-based for automation and used in the production line</h5>
-                            
-                            <a href="https://itsVinM.github.io/Tracker/" target="_blank" rel="noopener noreferrer">
-                                <img src="https://github.com/user-attachments/assets/df129919-0dd1-4d48-9152-a2ea4b173b4f" alt="Screenshot of the simple project tracker app">
-                            </a>
-            
-                            <a href="https://github.com/itsVinM/Tracker" target="_blank" rel="noopener noreferrer">
-                                View Source Code
-                            </a>
-                        </div>
-
-                        <div class="project-item">
-                            <h3 class="font-semibold text-white text-lg">GameBoy simulator (Ongoing)</h3>
-                            <a href="#">
-                                <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png">
-                            </a>
-                        </div>
-                    </div>
-                `,
             }
         ];
 
@@ -550,7 +617,6 @@
             
             desktop.appendChild(windowEl);
             
-            // Check if this window needs the motor script initialized
             if (data.motorScript) {
                 initAdvancedMotorSimulation();
             }
@@ -590,7 +656,7 @@
         function makeDraggable(header) {
             let isDragging = false;
             let offsetX, offsetY;
-            const windowEl = header.closest('.window');
+            const windowEl = header.closest('.window') || header.closest('.widget');
 
             header.addEventListener('mousedown', (e) => {
                 isDragging = true;
@@ -624,8 +690,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-    
-        // Generate windows and attach event listeners on page load
         windowsData.forEach(data => {
             const newWindow = createWindowEvent(data);
             const header = newWindow.querySelector('.window-header');
@@ -645,12 +709,17 @@
 
         window.onload = () => {
             document.getElementById('welcome-modal').style.display = 'flex';
+            
+            const projectsWidget = document.getElementById('projects-widget');
+            const projectsHeader = projectsWidget.querySelector('.projects-header');
+            if(projectsHeader) {
+                makeDraggable(projectsHeader);
+            }
         };
 
         document.querySelector('.welcome-modal-close').addEventListener('click', () => {
             document.getElementById('welcome-modal').style.display = 'none';
         });
-
     </script>
 </body>
 </html>

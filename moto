@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC Motor Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        canvas {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full">
+        <h1 class="text-2xl font-bold text-center mb-6">DC Motor Simulation</h1>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+            <div class="bg-gray-700 p-3 rounded-md text-center flex-1">
+                <span class="text-xs text-gray-400">TARGET RPM</span>
+                <div id="targetRpmDisplay" class="text-lg text-blue-400 font-bold">0 RPM</div>
+            </div>
+            <div class="bg-gray-700 p-3 rounded-md text-center flex-1">
+                <span class="text-xs text-gray-400">CURRENT</span>
+                <div id="currentDisplay" class="text-lg text-yellow-400 font-bold">0.00 A</div>
+            </div>
+            <div class="bg-gray-700 p-3 rounded-md text-center flex-1">
+                <span class="text-xs text-gray-400">ACTUAL RPM</span>
+                <div id="rpmDisplay" class="text-lg text-green-400 font-bold">0 RPM</div>
+            </div>
+            <div class="bg-gray-700 p-3 rounded-md text-center flex-1">
+                <span class="text-xs text-gray-400">VOLTAGE</span>
+                <div id="voltageDisplay" class="text-lg text-red-400 font-bold">0.00 V</div>
+            </div>
+            <div class="bg-gray-700 p-3 rounded-md text-center flex-1">
+                <span class="text-xs text-gray-400">TORQUE</span>
+                <div id="torqueDisplay" class="text-lg text-orange-400 font-bold">0.00 Nm</div>
+            </div>
+        </div>
+        <canvas id="motorCanvas" width="450" height="250" class="rounded-lg mb-6"></canvas>
+        <div class="flex items-center space-x-4">
+            <label for="rpmInput" class="text-sm">Target RPM:</label>
+            <input type="range" id="rpmInput" min="0" max="2500" step="10" value="0" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+        </div>
+        <div class="mt-4 text-sm text-gray-400 text-center">
+            Adjust the slider to set the target speed.
+        </div>
+    </div>
+    
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full mt-6">
+        <h2 class="text-xl font-bold text-center mb-4">Motor Performance Graphs</h2>
+        
+        <h3 class="text-center font-bold text-blue-400">RPM</h3>
+        <canvas id="rpmPlotCanvas" width="450" height="150" class="rounded-lg"></canvas>
+        <div id="rpmLegend" class="mt-2 mb-4 flex justify-center space-x-6 text-sm">
+            <div class="flex items-center space-x-2">
+                <span class="w-4 h-2 rounded-full bg-blue-400"></span>
+                <span>Target RPM</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="w-4 h-2 rounded-full bg-green-400"></span>
+                <span>Actual RPM</span>
+            </div>
+        </div>
+
+        <h3 class="text-center font-bold text-yellow-400">Current</h3>
+        <canvas id="currentPlotCanvas" width="450" height="150" class="rounded-lg"></canvas>
+        <div id="currentLegend" class="mt-2 mb-4 flex justify-center space-x-2 text-sm">
+            <div class="flex items-center space-x-2">
+                <span class="w-4 h-2 rounded-full bg-yellow-400"></span>
+                <span>Current</span>
+            </div>
+        </div>
+
+        <h3 class="text-center font-bold text-red-400">Duty Cycle</h3>
+        <canvas id="dutyCyclePlotCanvas" width="450" height="150" class="rounded-lg"></canvas>
+        <div id="dutyCycleLegend" class="mt-2 mb-4 flex justify-center space-x-2 text-sm">
+            <div class="flex items-center space-x-2">
+                <span class="w-4 h-2 rounded-full bg-red-400"></span>
+                <span>Duty Cycle</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('motorCanvas');
+            const ctx = canvas.getContext('2d');
+            const rpmInput = document.getElementById('rpmInput');
+            const targetRpmDisplay = document.getElementById('targetRpmDisplay');
+            const currentDisplay = document.getElementById('currentDisplay');
+            const rpmDisplay = document.getElementById('rpmDisplay');
+            const voltageDisplay = document.getElementById('voltageDisplay');
+            const torqueDisplay = document.getElementById('torqueDisplay');
+            
+            const rpmPlotCanvas = document.getElementById('rpmPlotCanvas');
+            const rpmPlotCtx = rpmPlotCanvas.getContext('2d');
+            const currentPlotCanvas = document.getElementById('currentPlotCanvas');
+            const currentPlotCtx = currentPlotCanvas.getContext('2d');
+            const dutyCyclePlotCanvas = document.getElementById('dutyCyclePlotCanvas');
+            const dutyCyclePlotCtx = dutyCyclePlotCanvas.getContext('2d');
+
+            const motorParams = {
+                R: 1.5,
+                L: 0.5,
+                kE: 0.05,
+                kT: 0.05,
+                J: 0.01,
+                B: 0.001
+            };
+
+            const controllerParams = {
+                Kp: 0.01
+            };
+
+            const converterParams = {
+                Vin: 24.0
+            };
+
+            let state = {
+                current: 0,
+                omega: 0,
+                theta: 0,
+                targetRPM: 0,
+                actualRPM: 0,
+                dutyCycle: 0,
+                voltage: 0,
+                torque: 0,
+            };
+            
+            let simTime = 0;
+            const dt = 0.01;
+
+            let plotData = { time: [], targetRPM: [], actualRPM: [], current: [], dutyCycle: [] };
+            let animationFrameId = null;
+
+            function updateSimulation() {
+                const error = state.targetRPM - state.actualRPM;
+                state.dutyCycle = Math.max(0, Math.min(1, controllerParams.Kp * error));
+                state.voltage = state.dutyCycle * converterParams.Vin;
+
+                const { R, L, kE, kT, J, B } = motorParams;
+                
+                const dI_dt = (state.voltage - R * state.current - kE * state.omega) / L;
+                const dOmega_dt = (kT * state.current - B * state.omega) / J;
+
+                state.current += dI_dt * dt;
+                state.omega += dOmega_dt * dt;
+                state.theta += state.omega * dt;
+                state.actualRPM = Math.round(state.omega * 60 / (2 * Math.PI));
+
+                state.torque = kT * state.current;
+
+                simTime += dt;
+
+                plotData.time.push(simTime);
+                plotData.targetRPM.push(state.targetRPM);
+                plotData.actualRPM.push(state.actualRPM);
+                plotData.current.push(state.current);
+                plotData.dutyCycle.push(state.dutyCycle);
+                
+                const maxDataPoints = 500;
+                if (plotData.time.length > maxDataPoints) {
+                    plotData.time.shift();
+                    plotData.targetRPM.shift();
+                    plotData.actualRPM.shift();
+                    plotData.current.shift();
+                    plotData.dutyCycle.shift();
+                }
+
+                targetRpmDisplay.textContent = `${state.targetRPM} RPM`;
+                currentDisplay.textContent = `${state.current.toFixed(2)} A`;
+                rpmDisplay.textContent = `${state.actualRPM} RPM`;
+                voltageDisplay.textContent = `${state.voltage.toFixed(2)} V`;
+                torqueDisplay.textContent = `${state.torque.toFixed(2)} Nm`;
+            }
+
+            function drawMotor() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                ctx.fillStyle = '#4a5568';
+                ctx.fillRect(centerX - 50, centerY - 25, 100, 50);
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.arc(centerX + 50, centerY, 5, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(state.theta);
+                ctx.fillStyle = '#63b3ed';
+                ctx.beginPath();
+                ctx.moveTo(-40, -10);
+                ctx.lineTo(40, -10);
+                ctx.lineTo(40, 10);
+                ctx.lineTo(-40, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawSubplot(ctx, canvas, data, color, yLabel, isDualLine = false) {
+                if (data.length === 0) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const padding = 30;
+                const plotWidth = canvas.width - padding * 2;
+                const plotHeight = canvas.height - padding * 2;
+                
+                const maxVal1 = Math.max(...data);
+                const maxVal2 = isDualLine ? Math.max(...plotData.actualRPM) : 0;
+                const maxTime = Math.max(...plotData.time);
+
+                ctx.strokeStyle = '#30363d';
+                ctx.fillStyle = '#8b949e';
+                ctx.font = '10px Fira Code';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const max_y_val = Math.max(maxVal1, maxVal2) * 1.1;
+                ctx.textAlign = 'right';
+                for (let i = 0; i <= 5; i++) {
+                    const y = padding + (plotHeight / 5) * i;
+                    const value = max_y_val * (1 - i / 5);
+                    ctx.fillText(value.toFixed(1), padding - 5, y);
+                }
+                ctx.fillText(yLabel, padding - 20, canvas.height / 2);
+
+                ctx.textAlign = 'center';
+                for (let i = 0; i <= 5; i++) {
+                    const x = padding + (plotWidth / 5) * i;
+                    const value = maxTime * (i / 5);
+                    ctx.fillText(value.toFixed(1) + 's', x, canvas.height - padding + 15);
+                }
+
+                ctx.strokeStyle = color;
+                ctx.beginPath();
+                plotData.time.forEach((time, i) => {
+                    const x = padding + (time / maxTime) * plotWidth;
+                    const y = padding + (1 - data[i] / max_y_val) * plotHeight;
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+
+                if (isDualLine) {
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.beginPath();
+                    plotData.time.forEach((time, i) => {
+                        const x = padding + (time / maxTime) * plotWidth;
+                        const y = padding + (1 - plotData.actualRPM[i] / max_y_val) * plotHeight;
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    });
+                    ctx.stroke();
+                }
+            }
+
+            function gameLoop() {
+                updateSimulation();
+                drawMotor();
+                
+                drawSubplot(rpmPlotCtx, rpmPlotCanvas, plotData.targetRPM, '#38bdf8', 'RPM', true);
+                drawSubplot(currentPlotCtx, currentPlotCanvas, plotData.current, '#facc15', 'Current (A)');
+                drawSubplot(dutyCyclePlotCtx, dutyCyclePlotCanvas, plotData.dutyCycle, '#ef4444', 'Duty Cycle');
+
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+
+            rpmInput.addEventListener('input', (e) => {
+                state.targetRPM = parseFloat(e.target.value);
+            });
+
+            // Start the simulation loop
+            gameLoop();
+        });
+    </script>
+</body>
+</html>

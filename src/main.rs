@@ -6,7 +6,7 @@ use tower_http::services::ServeDir;
 async fn main(){
     let static_files_service = ServeDir::new("static")
         .fallback(
-            tower_http::services::ServeFile::new("static/portfolio.html")
+            tower_http::services::ServeFile::new("index.html")
         );
 
     let app = Router::new()

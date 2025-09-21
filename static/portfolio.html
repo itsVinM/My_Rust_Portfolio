@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleek Vins Portfolio 🚀</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #1a1a1a;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .desktop {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://photos5.appleinsider.com/gallery/57227-116750-wallpaperexample-xl.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .dock {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 15px;
+            background: rgba(43, 43, 43, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .dock-item {
+            position: relative; /* Added for the active dot */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dock-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #555;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dock-icon:hover {
+            transform: translateY(-8px) scale(1.1);
+            background-color: #666;
+        }
+        
+        .dock-icon-img {
+            width: 70%;
+            height: 70%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .dock-icon-name {
+            color: white;
+            font-size: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .dock-item-active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            width: 4px;
+            height: 4px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .window {
+            position: absolute;
+            width: 60%;
+            max-width: 800px;
+            min-width: 400px;
+            height: 60%;
+            min-height: 300px;
+            background: rgba(230, 230, 230, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .window-header {
+            height: 30px;
+            background: rgba(200, 200, 200, 0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            cursor: grab;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .window-controls > div {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .window-close { background-color: #ff5f56; }
+        .window-minimize { background-color: #ffbd2e; }
+        .window-maximize { background-color: #27c93f; }
+        
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .window-content {
+            flex-grow: 1;
+            padding: 20px;
+            color: #333;
+            overflow-y: auto;
+        }
+
+        .clock {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgb(6, 6, 6);
+            font-size: 14px;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .widget {
+            position: absolute;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .widget-feed {
+            top: 50px;
+            right: 50px;
+            width: 250px; 
+            color: rgb(245, 245, 245);
+        }
+        
+        .widget-about-me {
+            top: 300px;
+            right: 50px;
+            width: 250px;
+            color: rgb(0, 0, 0);
+        }
+        
+        .widget-photo-memory {
+            top: 50px;
+            left: 50px;
+            width: 250px;
+            color: #ffffff;
+        }
+
+        .project-item {
+            background-color: rgba(0, 0, 0, 0.69);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .photo-item {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .photo-caption {
+            background-color: white;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .photo-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .photo-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Welcome Modal Styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .welcome-modal-content {
+            background: rgba(230, 230, 230, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            position: relative;
+            color: #333;
+        }
+
+        .welcome-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff5f56;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="desktop">
+        <div id="clock" class="clock"></div>
+
+        <div class="widget widget-feed text-white-800">
+            <h2 class="text-lg font-bold mb-3">Activity Feed</h2>
+            
+            <div class="mb-4">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <img src="Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    <img src="Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="widget widget-about-me text-white-800">
+            <h3 class="font-semibold text-lg mb-2 text-white">About Me</h3>
+            <p class="text-sm text-gray-200">
+                I am a Homologation & Validation Engineer in power electronics that likes doing things 🚀
+            </p>
+        </div>
+        
+        <div class="widget widget-photo-memory">
+            <h2 class="text-lg font-bold mb-3">My Tools</h2>
+            <div class="grid grid-cols-4 gap-2">
+                <div class="flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Rust</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">C</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Python</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Matlab</p>
+                </div>
+          
+                <div class="flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Simulink</p>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">SimScape</p>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">PLECS</p>
+                </div>
+          
+
+                <div class="flex flex-col items-center">
+                    <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Docker</p>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <img src="https://orbstack.dev/img/icon256.png" class="w-12 h-12 object-contain rounded-md">
+                    <p class="text-xs text-center mt-1">Orbstack</p>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+
+    <div class="dock">
+
+        <div class="dock-item" data-window-id="experience-window">
+            <div class="dock-icon">
+                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
+            </div>
+            <p class="dock-icon-name">Experience</p>
+        </div>
+        <div class="dock-item" data-window-id="contact-window">
+            <div class="dock-icon">
+                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
+
+            </div>
+            <p class="dock-icon-name">Contacts</p>
+        </div>
+        <div id="projects-dock-item" class="dock-item" data-window-id="projects-window">
+            <div class="dock-icon">
+                <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png">
+            </div>
+            <p class="dock-icon-name">Projects</p>
+        </div>
+
+    </div>
+
+    <div id="photo-modal" class="photo-modal" onclick="this.style.display='none'">
+        <img id="modal-image" src="">
+    </div>
+    
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <div class="welcome-modal-close" onclick="document.getElementById('welcome-modal').style.display='none';"></div>
+            <h1 class="text-3xl font-bold mb-4">Hello there, I am Vincentiu! 👋</h1>
+            <p class="text-md">
+                This portfolio is designed to look and feel like a simple desktop environment.
+                Feel free to explore it by opening the various applications in the dock below.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const windowsData = [ 
+            {
+                id: 'experience-window',
+                title: 'Work Experience',
+                content: `
+                    <h1 class="text-2xl font-bold p-5">Work Experience</h1>
+                    <div class="photo-gallery">
+                        <div class="photo-item" >
+                            <img src="https://i.ytimg.com/vi/dAegKZf0Ou8/maxresdefault.jpg">
+                            <div class="photo-caption">
+                                <p class="font-semibold">Premium PSU </p>
+                                <p class="text-xs text-black-1000">Homologation & Validation - Power Electronics (Barcelona 🇪🇸, Sep 2025 - now)</p>
+                                <p class="text-xs text-gray-500">Power electronics modeling, design, and functionality/EMC testing</p>
+                            </div>
+                        </div>
+                        <div class="photo-item" >
+                            <img src="https://www.applus.com/dam/jcr:1c089c40-631d-4543-943d-79426a3cad5e/Logo%20Applus+_IDIADA-300.png">
+                            <div class="photo-caption">
+                                <p class="font-semibold">Applis+ IDIADA </p>
+                                <p class="text-xs text-black-1000">Power Electronics Validation Engineer (Barcelona 🇪🇸, Jun 2024 - Aug 2025)</p><br>
+                                <p class="text-xs text-gray-500">Testing automotive converters for environmental, vibration and electrical compliance under ISO 16750</p>
+                            </div>
+                        </div>
+                        <div class="photo-item" >
+                            <img src="https://cyberinsider.com/wp-content/uploads/2024/04/CPU-Maker-Nexperia-Suffers-Data-Breach-Exposing-Technical-Data.png">
+                            <div class="photo-caption">
+                                <p class="font-semibold">Nexperia UK</p>
+                                <p class="text-xs text-black-1000">Power Electronics Application Engineer (Manchester 🏴󠁧󠁢󠁥󠁮󠁧󠁿, Sep 2022 - Dec 2023)</p><br>
+                                <p class="text-xs text-gray-500">Thermal analysis and test of semiconductors under JEDEC</p>
+                            </div>
+                        </div>
+                        <div class="photo-item" >
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSj1m592Q_ZSShp7D1bgv4HczEm2HMAa7mTlA&s">
+                            <div class="photo-caption">
+                                <p class="font-semibold">FPT Industrial </p>
+                                <p class="text-xs text-black-1000">Quality Engineer (Turin 🇮🇹, Mar 2022- Aug 2022)</p><br>
+                                <p class="text-xs text-gray-500">Tear down and analysis of engines to understand the root cause of the failures</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+            },
+            {
+                id: 'contact-window',
+                title: 'Contacts',
+                content: `
+                    <div class="p-0 flex flex-col h-full">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.1651034409393!2d2.177073115372439!3d41.38740527926457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a498b0f80a3199%3A0x8b65e91a0a5b281d!2sPla%C3%A7a%20de%20Catalunya!5e0!3m2!1sen!2ses!4v1628168288591!5m2!1sen!2ses"
+                                    class="map-frame"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                        ></iframe>
+                        <div class="p-4 bg-white/90">
+                            
+                            <h2 class="text-xl font-semibold">Contact Information</h2>
+                            <p class="text-sm mt-2">Feel free to reach out to me via email or connect with me on social media.</p>
+                            <ul class="list-disc list-inside mt-2 text-sm">
+                                <div class="contact-icons flex justify-center items-center gap-6">
+                                    <a href="mailto:vincentiu.mocanu00@gmail.com" target="_blank">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Mail_%28iOS%29.svg" alt="Email" style="width: 20px; height: 20px;">
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/itsvinm">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 20px; height: 20px;">
+                                    </a>
+                                    <a href="https://github.com/itsVinM" target="_blank">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub" style="width: 20px; height: 20px;">
+                                    </a>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+            },
+            {
+                id: 'projects-window',
+                title: 'Projects',
+                content: `
+                    <div class="p-4">
+                        <div class="project-item">
+                            <h5 class="font-semibold text-white text-lg">Simple project tracker web-based for automation and used in the production line</h5>
+                            
+                            <!-- This entire image is now a clickable link to the live product. -->
+                            <a href="https://itsVinM.github.io/Tracker/" target="_blank" rel="noopener noreferrer">
+                                <img src="https://github.com/user-attachments/assets/df129919-0dd1-4d48-9152-a2ea4b173b4f" alt="Screenshot of the simple project tracker app">
+                            </a>
+            
+                            <a href="https://github.com/itsVinM/Tracker" target="_blank" rel="noopener noreferrer">
+                                View Source Code
+                            </a>
+                        </div>
+
+                        <div class="project-item">
+                            <h3 class="font-semibold text-white text-lg">GameBoy simulator (Ongoing)</h3>
+                            <a href="#">
+                                <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png">
+                            </a>
+                        </div>
+                    </div>
+                `,
+            }
+        ];
+
+        const desktop = document.querySelector('.desktop');
+        const dockItems = document.querySelectorAll('.dock-item');
+        let activeWindow = null;
+        let zIndexCounter = 10;
+        
+        function createWindowEvent(data) {
+            const windowEl = document.createElement('div');
+            windowEl.id = data.id;
+            windowEl.classList.add('window', 'absolute', 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+
+            let headerHtml = `
+                <div class="window-header">
+                    <div class="window-controls">
+                        <div class="window-close"></div>
+                        <div class="window-minimize"></div>
+                        <div class="window-maximize"></div>
+                    </div>
+                    <span class="window-title">${data.title}</span>
+                </div>
+            `;
+            
+            let contentClass = 'window-content';
+
+            windowEl.innerHTML = headerHtml + `<div class="${contentClass}">${data.content}</div>`;
+            
+            desktop.appendChild(windowEl);
+            return windowEl;
+        }
+
+        function openWindow(id) {
+            const windowEl = document.getElementById(id);
+            if (!windowEl) return;
+
+            zIndexCounter++;
+            windowEl.style.zIndex = zIndexCounter;
+
+            windowEl.style.display = 'flex';
+            activeWindow = windowEl;
+            
+            // Add active class to the dock item
+            document.querySelector(`[data-window-id="${id}"]`).classList.add('dock-item-active');
+        }
+
+        function closeWindow(id) {
+            const windowEl = document.getElementById(id);
+            if (windowEl) {
+                windowEl.style.display = 'none';
+                if (activeWindow === windowEl) {
+                    activeWindow = null;
+                }
+            }
+            // Remove active class from the dock item
+            document.querySelector(`[data-window-id="${id}"]`).classList.remove('dock-item-active');
+        }
+
+        function makeDraggable(header) {
+            let isDragging = false;
+            let offsetX, offsetY;
+            const windowEl = header.closest('.window');
+
+            header.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                header.style.cursor = 'grabbing';
+                offsetX = e.clientX - windowEl.offsetLeft;
+                offsetY = e.clientY - windowEl.offsetTop;
+                
+                zIndexCounter++;
+                windowEl.style.zIndex = zIndexCounter;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    windowEl.style.left = e.clientX - offsetX + 'px';
+                    windowEl.style.top = e.clientY - offsetY + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                header.style.cursor = 'grab';
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const date = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('clock').textContent = `${date} ${time}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Generate windows and attach event listeners on page load
+        windowsData.forEach(data => {
+            const newWindow = createWindowEvent(data);
+            const header = newWindow.querySelector('.window-header');
+            if (header) {
+                makeDraggable(header);
+            }
+
+            // Event listeners for window controls (close, minimize, maximize)
+            newWindow.querySelector('.window-close').addEventListener('click', () => closeWindow(data.id));
+        });
+
+        // Event listeners for dock items
+        dockItems.forEach(item => {
+            const windowId = item.dataset.windowId;
+            if (windowId) {
+                item.addEventListener('click', () => openWindow(windowId));
+            }
+        });
+
+        // Open the Projects window on load, slightly offset
+        window.onload = () => {
+            document.getElementById('welcome-modal').style.display = 'flex';
+        };
+
+        // Close the welcome modal and open the projects window
+        document.querySelector('.welcome-modal-close').addEventListener('click', () => {
+            document.getElementById('welcome-modal').style.display = 'none';
+            openWindow('projects-window');
+        });
+    </script>
+</body>
+</html>

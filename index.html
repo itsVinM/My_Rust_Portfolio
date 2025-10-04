@@ -13,6 +13,7 @@
             --window-width: 60%;
             --window-height: 80%;
             --dock-icon-size: 50px;
+            --widget-width: 400px;
         }
 
         body {
@@ -38,11 +39,9 @@
         /* --- DOCK STYLES: RIGHT SIDE, VERTICAL --- */
         .dock-container {
             position: absolute;
-            top: 50%;
-            bottom: auto;
-            right: 20px;
-            left: auto;
-            transform: translateY(-50%);
+            top: 50%; 
+            right: 20px; 
+            transform: translateY(-50%); 
             z-index: 1000;
         }
 
@@ -59,7 +58,64 @@
             align-items: center;
         }
         
-        /* --- WINDOW & POPUP STYLES --- */
+        /* --- WIDGET LAYOUT: Left side, Absolute positioning for drag --- */
+        /* Widgets must now use absolute positioning for dragging */
+        .widget-layout {
+            position: absolute;
+            top: 50%;
+            left: 15%; /* Starting position shifted left */
+            transform: translate(-50%, -50%); /* Use this to center the group initially */
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            padding: 20px;
+            max-width: calc(100vw - 120px);
+            z-index: 5; /* Lower than windows */
+        }
+        
+        .widget {
+            position: absolute; /* Crucial for dragging */
+            padding: 0; /* Remove padding from container to put it in content */
+            width: var(--widget-width);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(20px);
+            border-radius: 18px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+            font-weight: 500;
+            z-index: 5;
+            transition: box-shadow 0.1s;
+        }
+
+        .widget-header {
+            padding: 8px 15px;
+            cursor: grab;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 18px 18px 0 0;
+            background-color: rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .widget-content {
+            padding: 15px 20px;
+        }
+        
+        /* Initial Widget Positioning (for the two widgets) */
+        #tools-widget {
+            top: 100px;
+            left: 50px;
+        }
+        #projects-widget {
+            top: 450px;
+            left: 50px;
+        }
+
+
+        /* --- WINDOW STYLES --- */
         .window {
             position: absolute;
             width: var(--window-width);
@@ -72,21 +128,20 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            display: none; /* All windows start hidden */
+            display: none;
             flex-direction: column;
             z-index: 10;
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%);
         }
-        
-        /* Center small windows more compactly */
+
         .window.small-centered {
             width: 400px;
             height: auto;
+            max-height: 80vh;
             min-height: 300px;
         }
-
 
         .window-header {
             height: 30px;
@@ -101,33 +156,8 @@
             display: flex;
             gap: 8px;
         }
-
-        .window-controls > div {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .window-close { background-color: #ff5f56; }
-        .window-minimize { background-color: #ffbd2e; }
-        .window-maximize { background-color: #27c93f; }
         
-        .window-title {
-            flex-grow: 1;
-            text-align: center;
-            color: #555;
-            font-size: 14px;
-        }
-        
-        .window-content {
-            flex-grow: 1;
-            padding: 20px;
-            color: #333;
-            overflow-y: auto;
-        }
-
+        /* --- UTILITY STYLES (Clock, Dock items, etc.) --- */
         .clock {
             position: absolute;
             top: 15px;
@@ -138,73 +168,59 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
-
-        .map-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 12px;
-        }
-
-        /* General Dock Item Styles */
-        .dock-item {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .dock-icon {
-            position: relative;
-            width: var(--dock-icon-size);
-            height: var(--dock-icon-size);
-            background-color: #555;
-            border-radius: 12px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .dock-icon:hover {
-            transform: scale(1.1);
-            background-color: #666;
-        }
-
-        .dock-item-active::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 100%;
-            transform: translateY(-50%);
-            margin-left: 5px; 
-            margin-top: 0;
-            width: 5px;
-            height: 5px;
-            background-color: white;
-            border-radius: 50%;
-        }
         
-        .dock-icon-img {
-            width: 70%;
-            height: 70%;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
         .dock-icon-name {
             color: white;
             font-size: 11px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             text-align: center;
         }
+        
+        .projects-widget .project-grid {
+             grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: 15px;
+        }
+        
+        .project-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px; /* Reduced padding */
+            border-radius: 8px; /* Reduced border radius */
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .project-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
-        /* Small screen adjustment */
+        /* Small screen adjustments */
         @media (max-width: 500px) {
             :root {
                 --dock-icon-size: 30px;
+                --widget-width: 90%;
+            }
+            .widget-layout {
+                left: 50%;
+                padding-right: 20px;
+            }
+            #tools-widget, #projects-widget {
+                 top: initial;
+                 left: 50%;
+                 transform: translateX(-50%);
+                 position: relative;
+            }
+            .dock-container {
+                right: 50%;
+                top: initial;
+                bottom: 10px;
+                transform: translateX(50%);
+                flex-direction: row;
+            }
+            .dock {
+                flex-direction: row;
+                padding: 10px 20px;
             }
         }
     </style>
@@ -219,15 +235,15 @@
             <div class="dock">
                 <div class="dock-item" data-window-id="experience-window">
                     <div class="dock-icon">
-                        <img class="dock-icon-img" src="https://www.semi.org/sites/semi.org/files/styles/555x419/public/picture/STMicro%2520main.jpg.webp?itok=jjFiMNoU">
+                        <img class="dock-icon-img" src="https://www.semi.org/sites/semi.org/files/styles/555x419/public/picture/STMicro%2520main.jpg.webp?itok=jjFiMnoU">
                     </div>
                     <p class="dock-icon-name">Experience</p>
                 </div>
-                <div class="dock-item" data-window-id="tools-window">
+                <div class="dock-item" data-window-id="contact-window">
                     <div class="dock-icon">
-                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Caliper_icon.png">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
                     </div>
-                    <p class="dock-icon-name">Tools</p>
+                    <p class="dock-icon-name">Contacts</p>
                 </div>
                 <div class="dock-item" data-window-id="about-window">
                     <div class="dock-icon">
@@ -235,11 +251,79 @@
                     </div>
                     <p class="dock-icon-name">About Me</p>
                 </div>
-                <div class="dock-item" data-window-id="contact-window">
-                    <div class="dock-icon">
-                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
+            </div>
+        </div>
+
+        <div id="tools-widget" class="widget tools-widget">
+            <div class="widget-header">Tools 🔧 (Drag Me)</div>
+            <div class="widget-content">
+                <div class="grid grid-cols-5 gap-4">
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Rust</p>
                     </div>
-                    <p class="dock-icon-name">Contacts</p>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">C</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Python</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">JS</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Matlab</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Simulink</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">SimScape</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">PLECS</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Docker</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://orbstack.dev/img/icon256.png" class="w-10 h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Orbstack</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="projects-widget" class="widget projects-widget">
+            <div class="widget-header">Projects 🚀 (Drag Me)</div>
+            <div class="widget-content">
+                <div class="project-grid grid gap-3">
+                    <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item">
+                            <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-10 h-10 object-contain rounded-md mr-3">
+                            <p class="text-xs text-white font-semibold">Powertrain Simulation Tool</p>
+                        </div>
+                    </a>
+                    <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item">
+                            <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-10 h-10 object-contain rounded-md mr-3">
+                            <p class="text-xs text-white font-semibold">Validation Tracker App</p>
+                        </div>
+                    </a>
+                    <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item">
+                            <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-10 h-10 object-contain rounded-md mr-3">
+                            <p class="text-xs text-white font-semibold">GameBoy Emulator in Rust</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -253,8 +337,7 @@
                 </div>
                 <span class="window-title">Work Experience</span>
             </div>
-            <div class="window-content">
-                </div>
+            <div class="window-content"></div>
         </div>
 
         <div id="contact-window" class="window small-centered">
@@ -266,21 +349,7 @@
                 </div>
                 <span class="window-title">Contacts</span>
             </div>
-            <div class="window-content">
-                </div>
-        </div>
-        
-        <div id="tools-window" class="window small-centered">
-            <div class="window-header">
-                <div class="window-controls">
-                    <div class="window-close"></div>
-                    <div class="window-minimize"></div>
-                    <div class="window-maximize"></div>
-                </div>
-                <span class="window-title">My Tools</span>
-            </div>
-            <div class="window-content">
-                </div>
+            <div class="window-content"></div>
         </div>
         
         <div id="about-window" class="window">
@@ -292,21 +361,7 @@
                 </div>
                 <span class="window-title">More About Me</span>
             </div>
-            <div class="window-content">
-                </div>
-        </div>
-
-        <div id="projects-window" class="window small-centered">
-            <div class="window-header">
-                <div class="window-controls">
-                    <div class="window-close"></div>
-                    <div class="window-minimize"></div>
-                    <div class="window-maximize"></div>
-                </div>
-                <span class="window-title">Projects</span>
-            </div>
-            <div class="window-content">
-                </div>
+            <div class="window-content"></div>
         </div>
 
     </div>
@@ -319,37 +374,12 @@
                 className: 'small-centered', 
                 content: `
                     <style>
-                        /* Local styling for the experience window's content */
-                        .photo-gallery {
-                            display: flex;
-                            flex-direction: column;
-                            gap: 15px;
-                        }
-                        .photo-item {
-                            display: flex;
-                            align-items: flex-start;
-                            padding: 10px;
-                            background: #fff;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                        }
-                        .photo-item img {
-                            width: 60px;
-                            height: 60px;
-                            object-fit: contain;
-                            border-radius: 4px;
-                            margin-right: 15px;
-                            flex-shrink: 0;
-                        }
-                        .photo-caption {
-                            color: #333;
-                        }
-                        .photo-caption p {
-                            line-height: 1.3;
-                        }
-                        .text-black-1000 {
-                            color: #1a1a1a;
-                        }
+                        .photo-gallery { display: flex; flex-direction: column; gap: 15px; }
+                        .photo-item { display: flex; align-items: flex-start; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+                        .photo-item img { width: 60px; height: 60px; object-fit: contain; border-radius: 4px; margin-right: 15px; flex-shrink: 0; }
+                        .photo-caption { color: #333; }
+                        .photo-caption p { line-height: 1.3; }
+                        .text-black-1000 { color: #1a1a1a; }
                     </style>
                     <h1 class="text-2xl font-bold p-5 text-gray-800">Work Experience</h1>
     
@@ -394,8 +424,8 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.828859345262!2d2.1524314!3d41.3850638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4m0!3e0!5m2!1sen!2ses"
-                                    class="map-frame"
+                        <iframe src="https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed"
+                                    class="map-frame w-full h-full border-none"
                                     allowfullscreen=""
                                     loading="lazy"
                         ></iframe>
@@ -459,108 +489,6 @@
                         </div>
                     </div>
                 `,
-            },
-            {
-                id: 'tools-window',
-                title: 'My Tools',
-                className: 'small-centered', 
-                content: `
-                    <div class="p-5">
-                        <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Development Tools 🔧</h1>
-                        <div class="grid grid-cols-5 gap-6">
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Rust</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">C</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Python</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">JS</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Matlab</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Simulink</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">SimScape</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">PLECS</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Docker</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://orbstack.dev/img/icon256.png" class="w-10 h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1 text-gray-700">Orbstack</p>
-                            </div>
-                        </div>
-                    </div>
-                `,
-            },
-            {
-                id: 'projects-window',
-                title: 'Projects',
-                className: 'small-centered', 
-                content: `
-                    <style>
-                        /* Local styling for the project window's content */
-                        .project-grid {
-                             display: grid;
-                             grid-template-columns: repeat(2, minmax(0, 1fr));
-                             gap: 15px;
-                        }
-                        .project-item {
-                            background-color: rgba(0, 0, 0, 0.05); /* Lighter background in white window */
-                            padding: 15px;
-                            border-radius: 10px;
-                            transition: background-color 0.2s;
-                            cursor: pointer;
-                            color: #333;
-                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                        }
-                        .project-item:hover {
-                            background-color: rgba(0, 0, 0, 0.1);
-                        }
-                    </style>
-                    <div class="p-5">
-                        <h1 class="text-2xl font-bold mb-4 text-gray-800 text-center">Projects 🚀</h1>
-                        <div class="project-grid">
-                            <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex items-center rounded-xl transition-colors">
-                                    <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
-                                    <p class="text-sm font-semibold">Powertrain Simulation Tool</p>
-                                </div>
-                            </a>
-                            <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex items-center rounded-xl transition-colors">
-                                    <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
-                                    <p class="text-sm font-semibold">Validation Tracker App</p>
-                                </div>
-                            </a>
-                            <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex items-center rounded-xl transition-colors">
-                                    <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mr-3">
-                                    <p class="text-sm font-semibold">GameBoy Emulator in Rust</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                `,
             }
         ];
 
@@ -569,23 +497,22 @@
         let activeWindow = null;
         let zIndexCounter = 10;
         
-        function createWindowEvent(data) {
+        /**
+         * Injects content and sets class/title for a pre-existing window shell.
+         */
+        function initializeWindowContent(data) {
             const windowEl = document.getElementById(data.id); 
+            if(!windowEl) return;
             
-            if(windowEl) {
-                // Set initial class and inject content/title into the pre-existing HTML shell
-                if (data.className) {
-                    windowEl.classList.add(data.className);
-                }
-                const contentArea = windowEl.querySelector('.window-content');
-                const titleSpan = windowEl.querySelector('.window-title');
-                
-                if (contentArea) contentArea.innerHTML = data.content;
-                if (titleSpan) titleSpan.textContent = data.title;
-                
-                return windowEl;
+            if (data.className) {
+                windowEl.classList.add(data.className);
             }
-            return null;
+            
+            const contentArea = windowEl.querySelector('.window-content');
+            const titleSpan = windowEl.querySelector('.window-title');
+            
+            if (contentArea) contentArea.innerHTML = data.content;
+            if (titleSpan) titleSpan.textContent = data.title;
         }
 
         function openWindow(id) {
@@ -620,37 +547,48 @@
         }
 
         function minimizeWindow(id) {
-            const windowEl = document.getElementById(id);
-            if (windowEl) {
-                windowEl.style.display = 'none';
-            }
+            closeWindow(id); 
         }
 
         function maximizeWindow(id) {
             const windowEl = document.getElementById(id);
             if (windowEl) {
                  windowEl.classList.toggle('fullscreen');
+                 windowEl.classList.remove('small-centered');
             }
         }
-
+        
+        /**
+         * Generic function to make any element with a 'header' draggable.
+         * Works for both .window-header and .widget-header.
+         */
         function makeDraggable(header) {
             let isDragging = false;
             let offsetX, offsetY;
-            const windowEl = header.closest('.window');
+            const draggableEl = header.closest('.window, .widget');
 
-            if (!windowEl) return;
+            if (!draggableEl) return;
             
+            // Set initial absolute position if it's a widget and doesn't have inline styles yet
+            if (draggableEl.classList.contains('widget') && draggableEl.style.position !== 'absolute') {
+                draggableEl.style.position = 'absolute';
+            }
+
             function handleMouseDown(e) {
+                // Ignore right-clicks
+                if (e.button !== 0) return; 
                 e.preventDefault();
                 isDragging = true;
-                const rect = windowEl.getBoundingClientRect();
+                
+                // Ensure it's the top element
+                zIndexCounter++;
+                draggableEl.style.zIndex = zIndexCounter;
+
+                const rect = draggableEl.getBoundingClientRect();
                 offsetX = e.clientX - rect.left;
                 offsetY = e.clientY - rect.top;
 
-                zIndexCounter++;
-                windowEl.style.zIndex = zIndexCounter;
-
-                windowEl.style.cursor = 'grabbing';
+                header.style.cursor = 'grabbing';
             }
 
             function handleMouseMove(e) {
@@ -659,17 +597,18 @@
                 let newX = e.clientX - offsetX;
                 let newY = e.clientY - offsetY;
 
-                newX = Math.max(0, Math.min(newX, window.innerWidth - windowEl.offsetWidth));
-                newY = Math.max(0, Math.min(newY, window.innerHeight - windowEl.offsetHeight));
+                // Clamp position to viewport edges (optional, but good practice)
+                newX = Math.max(0, Math.min(newX, window.innerWidth - draggableEl.offsetWidth));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - draggableEl.offsetHeight));
                 
-                windowEl.style.left = `${newX}px`;
-                windowEl.style.top = `${newY}px`;
-                windowEl.style.transform = 'none'; 
+                draggableEl.style.left = `${newX}px`;
+                draggableEl.style.top = `${newY}px`;
+                draggableEl.style.transform = 'none'; // Essential to override CSS transforms
             }
 
             function handleMouseUp() {
                 isDragging = false;
-                windowEl.style.cursor = 'grab';
+                header.style.cursor = 'grab';
             }
 
             header.addEventListener('mousedown', handleMouseDown);
@@ -677,13 +616,13 @@
             document.addEventListener('mouseup', handleMouseUp);
         }
 
-        function initializeWindows() {
-            // Inject content into all pre-existing HTML window structures
+        function initializeApp() {
+            // 1. Inject Content and Set Classes for Windows
             windowsData.forEach(data => {
-                createWindowEvent(data);
+                initializeWindowContent(data);
             });
 
-            // Set up all window controls
+            // 2. Set up Window Controls (Close, Minimize, Maximize)
             document.querySelectorAll('.window').forEach(windowEl => {
                 const id = windowEl.id;
                 const closeButton = windowEl.querySelector('.window-close');
@@ -695,8 +634,8 @@
                 if (maximizeButton) maximizeButton.onclick = () => maximizeWindow(id);
             });
             
-            // Apply dragging to headers
-            document.querySelectorAll('.window-header').forEach(makeDraggable);
+            // 3. Apply Dragging to headers (Windows and Widgets)
+            document.querySelectorAll('.window-header, .widget-header').forEach(makeDraggable);
         }
         
         function updateClock() {
@@ -706,7 +645,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            initializeWindows();
+            initializeApp();
 
             // Dock event listeners
             dockItems.forEach(item => {
@@ -714,11 +653,10 @@
                 item.onclick = () => {
                     const windowEl = document.getElementById(windowId);
                     
-                    // Toggle visibility of the target window/pop-up
                     if (windowEl && windowEl.style.display === 'flex') {
                         closeWindow(windowId);
                     } else {
-                        // Close any other open windows before opening a new one
+                        // Close all other windows for single-window interaction
                         document.querySelectorAll('.window').forEach(win => {
                             if (win.id !== windowId) closeWindow(win.id);
                         });
@@ -731,8 +669,6 @@
             updateClock();
             setInterval(updateClock, 1000);
             
-            // Auto-open About Me on load for immediate context
-            openWindow('about-window');
         });
 
     </script>

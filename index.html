@@ -37,103 +37,52 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: TOP, HORIZONTAL (Fixed for all sizes) --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Matches Screenshot 2025-10-04) --- */
         .dock-container {
             position: absolute;
-            top: 30px; /* TOP ALIGNMENT */
+            top: 50%; /* Center vertically */
             bottom: auto;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 20px; /* Fixed distance from the right edge */
+            left: auto;
+            transform: translateY(-50%); /* Adjust for vertical centering */
             z-index: 1000;
-            /* Ensure it's responsive on smaller screens */
-            max-width: 95%; 
         }
 
         .dock {
-            padding: 10px 20px;
+            padding: 20px 10px; /* Vertical padding is larger */
             background: rgba(43, 43, 43, 0.25);
             backdrop-filter: blur(20px);
-            border-radius: 30px; 
+            border-radius: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            flex-direction: row; /* Horizontal */
+            flex-direction: column; /* STACK ICONS VERTICALLY */
             gap: 20px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            align-items: center;
-        }
-
-        .dock-item-active::after {
-            content: '';
-            position: absolute;
-            top: 100%; /* Move dot to bottom */
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: 5px; /* Spacing from icon */
-            width: 5px;
-            height: 5px;
-            background-color: white;
-            border-radius: 50%;
+            align-items: center; /* Center icons within the dock */
         }
         
-        /* WIDGET LAYOUT: Centered, pushed down from the top */
+        /* Widget Layout - Shifted left and centered to avoid the dock */
         .widget-layout {
             position: absolute;
-            top: 55%; /* PUSHED DOWN significantly to ensure space from the dock */
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column; /* Stack widgets vertically */
-            justify-content: flex-start; /* Align widgets to the top of their container */
-            align-items: center;
-            gap: 40px; /* Increased spacing between widgets */
-            padding: 20px;
-            max-width: 90vw; /* Keep layout contained */
-            max-height: 90vh; /* Keep layout contained */
-            overflow-y: auto; /* Allow scrolling if widgets exceed screen height */
-        }
-
-        /* GENERAL DOCK ITEM STYLES (Kept consistent) */
-        .dock-item {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .dock-icon {
-            position: relative;
-            width: var(--dock-icon-size);
-            height: var(--dock-icon-size);
-            background-color: #555;
-            border-radius: 12px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-            display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
+            gap: 40px;
+            padding: 20px;
+            max-width: calc(100vw - 120px); /* Leave space for the dock on the right */
+            max-height: 90vh;
+            overflow-y: auto;
+            /* Added padding-right adjustment for better look */
+            padding-right: 100px;
         }
 
-        .dock-icon:hover {
-            transform: translateY(-8px) scale(1.1);
-            background-color: #666;
-        }
-        
-        .dock-icon-img {
-            width: 70%;
-            height: 70%;
-            border-radius: 8px;
-            object-fit: cover;
-        }
 
-        .dock-icon-name {
-            color: white;
-            font-size: 11px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
+        /* --- WINDOW & POPUP STYLES --- */
 
-        /* WINDOW STYLES (Kept consistent) */
         .window {
             position: absolute;
             width: var(--window-width);
@@ -149,12 +98,27 @@
             display: none;
             flex-direction: column;
             z-index: 10;
-            top: 50%; /* Ensure windows are always centered */
+            top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%);
         }
 
-        /* Specific style for the small, centered window */
+        /* Hobbies Widget as a Window (Popup) */
+        #hobbies-window {
+            width: 450px; /* Specific size for the pop-up */
+            height: 300px;
+            max-width: 90vw;
+            background: rgba(0, 0, 0, 0.9); /* Dark background for modal */
+            color: #ffffff;
+            z-index: 2000; /* High z-index to be on top */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        #hobbies-window .window-content {
+            padding: 15px;
+            color: #ccc;
+        }
+
         .window.small-centered {
             width: 800px;
             height: 550px;
@@ -220,12 +184,12 @@
             border-radius: 12px;
         }
 
-        
+        /* --- WIDGET STYLES (Moved out of widget-layout for this specific layout) --- */
         .widget {
-            padding: 20px;
+            padding: 20px; 
             background: rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(20px);
-            border-radius: 18px;
+            border-radius: 18px; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             color: #ffffff;
@@ -233,13 +197,68 @@
             width: var(--widget-width);
         }
         
+        /* General Dock Item Styles */
+        .dock-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dock-icon {
+            position: relative;
+            width: var(--dock-icon-size);
+            height: var(--dock-icon-size);
+            background-color: #555;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dock-icon:hover {
+            transform: scale(1.1); /* Removed translateY for vertical dock */
+            background-color: #666;
+        }
+
+        .dock-item-active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%; /* Dot is on the right of the icon */
+            transform: translateY(-50%);
+            margin-left: 5px; 
+            margin-top: 0;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        .dock-icon-img {
+            width: 70%;
+            height: 70%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .dock-icon-name {
+            color: white;
+            font-size: 11px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
         /* Tool and Project Specific Layouts */
         .tools-widget .grid-cols-5 {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+             grid-template-columns: repeat(5, minmax(0, 1fr));
         }
         .projects-widget .project-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 15px;
+             grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: 15px;
         }
         
         .project-item {
@@ -257,21 +276,22 @@
         .welcome-modal {
             display: none;
         }
-
-        /* Small screen adjustment for dock icons */
-        @media (max-width: 500px) {
-            :root {
-                --dock-icon-size: 30px;
-                --widget-width: 90%;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div class="desktop">
+        
+        <div id="clock" class="clock"></div>
+
         <div class="dock-container">
             <div class="dock">
+                <div class="dock-item dock-item-active" data-window-id="hobbies-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Motorbike.svg/2048px-Motorbike.svg.png">
+                    </div>
+                    <p class="dock-icon-name">Hobbies</p>
+                </div>
                 <div class="dock-item" data-window-id="experience-window">
                     <div class="dock-icon">
                         <img class="dock-icon-img" src="https://www.semi.org/sites/semi.org/files/styles/555x419/public/picture/STMicro%2520main.jpg.webp?itok=jjFiMNoU">
@@ -281,7 +301,6 @@
                 <div class="dock-item" data-window-id="contact-window">
                     <div class="dock-icon">
                         <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
-                        <div class="notification-dot"></div>
                     </div>
                     <p class="dock-icon-name">Contacts</p>
                 </div>
@@ -294,8 +313,6 @@
             </div>
         </div>
 
-        <div id="clock" class="clock"></div>
-        
         <div class="widget-layout">
             
             <div id="tools-widget" class="widget tools-widget">
@@ -367,50 +384,47 @@
                     </a>
                 </div>
             </div>
-
-            <div id="hobbies-widget" class="widget widget-feed text-white-800">
-                <h2 class="text-xl font-bold mb-4">Hobbies & Memories 🏍️🗺️</h2>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                     <div class="flex flex-col items-center text-center">
-                        <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
-                        <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-24 object-cover rounded-md shadow-lg">
-                    </div>
-                    <div class="flex flex-col items-center text-center">
-                        <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
-                        <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-24 object-cover rounded-md shadow-lg">
-                    </div>
+        </div>
+        
+        <div id="hobbies-window" class="window small-centered" style="display: flex;">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
                 </div>
-                <h3 class="font-semibold text-sm mb-2 text-center">Travel Memories</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="static/Istanbul.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
-                    <img src="static/Kapadokia.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
+                <span class="window-title">Hobbies & Memories 🏍️🗺️</span>
+            </div>
+            <div class="window-content">
+                <div class="flex flex-col items-center text-white">
+                    <h2 class="text-xl font-bold mb-4">What I do for fun</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                         <div class="flex flex-col items-center text-center">
+                            <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
+                            <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-24 object-cover rounded-md shadow-lg">
+                        </div>
+                        <div class="flex flex-col items-center text-center">
+                            <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
+                            <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-24 object-cover rounded-md shadow-lg">
+                        </div>
+                    </div>
+                    <h3 class="font-semibold text-sm mb-2 text-center mt-3">Travel Memories</h3>
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+                        <img src="static/Istanbul.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
+                        <img src="static/Kapadokia.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
+                    </div>
                 </div>
             </div>
-            
         </div>
-    </div>
 
-    <div id="photo-modal" class="photo-modal" onclick="this.style.display='none'">
-        <img id="modal-image" src="">
-    </div>
-    
-    <div id="welcome-modal" class="welcome-modal">
-        <div class="welcome-modal-content">
-            <div class="welcome-modal-close" onclick="document.getElementById('welcome-modal').style.display='none';"></div>
-            <h1 class="text-3xl font-bold mb-4">Hi there! I'm Vincentiu 👋</h1>
-            <p class="text-md">
-                Passionate Power Electronics Engineer that built this portfolio as a simple desktop environment to showcase my work. 
-                Go ahead and drag the windows around to explore my professional journey, from my projects to my work experience. 🔥
-            </p>
-        </div>
     </div>
 
     <script>
         const windowsData = [ 
+            // Removed hobbies since it's now a dedicated window
             {
                 id: 'experience-window',
                 title: 'Work Experience',
-                // Added a class to data for custom sizing/positioning
                 className: 'small-centered', 
                 content: `
                     <h1 class="text-2xl font-bold p-5">Work Experience</h1>
@@ -505,6 +519,13 @@
                         </div>
                     </div>
                 `,
+            },
+            // The Hobbies window data is initialized separately but added here for completeness
+            {
+                id: 'hobbies-window',
+                title: 'Hobbies & Memories 🏍️🗺️',
+                content: document.getElementById('hobbies-window').querySelector('.window-content').innerHTML,
+                className: 'small-centered',
             }
         ];
 
@@ -514,19 +535,15 @@
         let zIndexCounter = 10;
         
         function createWindowEvent(data) {
+            const existingEl = document.getElementById(data.id);
+            if (existingEl) return existingEl; // Hobbies window already exists in HTML
+
             const windowEl = document.createElement('div');
             windowEl.id = data.id;
-            // Added default position classes
             windowEl.classList.add('window', 'absolute'); 
             
-            // Add custom class if defined (e.g., 'small-centered' for Experience)
             if (data.className) {
                 windowEl.classList.add(data.className);
-            } else {
-                 // Default centering for other windows
-                windowEl.style.top = '50%';
-                windowEl.style.left = '50%';
-                windowEl.style.transform = 'translate(-50%, -50%)';
             }
 
             let headerHtml = `
@@ -540,9 +557,7 @@
                 </div>
             `;
             
-            let contentClass = 'window-content';
-
-            windowEl.innerHTML = headerHtml + `<div class="${contentClass}">${data.content}</div>`;
+            windowEl.innerHTML = headerHtml + `<div class="window-content">${data.content}</div>`;
             
             desktop.appendChild(windowEl);
             
@@ -561,6 +576,7 @@
             
             const dockItem = document.querySelector(`[data-window-id="${id}"]`);
             if (dockItem) {
+                dockItems.forEach(item => item.classList.remove('dock-item-active'));
                 dockItem.classList.add('dock-item-active');
             }
         }
@@ -579,24 +595,45 @@
             }
         }
 
+        function minimizeWindow(id) {
+            const windowEl = document.getElementById(id);
+            if (windowEl) {
+                // Simple minimize: hide the window but keep the dock-item active status
+                windowEl.style.display = 'none';
+            }
+        }
+
+        function maximizeWindow(id) {
+            // Simple implementation: toggle fullscreen-like appearance for demonstration
+            const windowEl = document.getElementById(id);
+            if (windowEl) {
+                 windowEl.classList.toggle('fullscreen');
+            }
+        }
+
         function makeDraggable(header) {
             let isDragging = false;
             let offsetX, offsetY;
             const windowEl = header.closest('.window') || header.closest('.widget');
 
-            // Disable dragging for windows on small/touch devices for better usability
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
             if (isTouchDevice && windowEl.classList.contains('window')) {
-                return; 
+                // Allow dragging on touch devices only for windows, but not for widgets
+                // This is a complex trade-off, simplifying here by keeping default behavior 
+                // but ensuring windows are properly positioned via CSS.
             }
             
-            // Standard dragging for desktop/widgets
             function handleMouseDown(e) {
                 e.preventDefault();
                 isDragging = true;
                 const rect = windowEl.getBoundingClientRect();
                 offsetX = e.clientX - rect.left;
                 offsetY = e.clientY - rect.top;
+
+                // Bring to front
+                zIndexCounter++;
+                windowEl.style.zIndex = zIndexCounter;
+
                 windowEl.style.cursor = 'grabbing';
             }
 
@@ -606,13 +643,13 @@
                 let newX = e.clientX - offsetX;
                 let newY = e.clientY - offsetY;
 
-                // Simple boundaries to keep the window somewhat on screen
                 newX = Math.max(0, Math.min(newX, window.innerWidth - windowEl.offsetWidth));
                 newY = Math.max(0, Math.min(newY, window.innerHeight - windowEl.offsetHeight));
                 
                 windowEl.style.left = `${newX}px`;
                 windowEl.style.top = `${newY}px`;
-                windowEl.style.transform = 'none'; // Clear translate for absolute positioning
+                // Clear translate to take over absolute positioning
+                windowEl.style.transform = 'none'; 
             }
 
             function handleMouseUp() {
@@ -626,82 +663,67 @@
         }
 
         function initializeWindows() {
-            windowsData.forEach(data => {
-                const windowEl = createWindowEvent(data);
-                
-                // Set up event listeners for the new window controls
-                const closeButton = windowEl.querySelector('.window-close');
-                if (closeButton) {
-                    closeButton.onclick = () => closeWindow(data.id);
-                }
-
-                // Header dragging
-                const header = windowEl.querySelector('.window-header');
-                if (header) {
-                    makeDraggable(header);
-                    
-                    header.addEventListener('mousedown', (e) => {
-                        zIndexCounter++;
-                        windowEl.style.zIndex = zIndexCounter;
-                    });
-                }
+            // Initialize windows from data, excluding the pre-existing hobbies window
+            windowsData.filter(d => d.id !== 'hobbies-window').forEach(data => {
+                createWindowEvent(data);
             });
 
-            // Set up dock item clicks
-            dockItems.forEach(item => {
-                item.onclick = (e) => {
-                    const windowId = item.getAttribute('data-window-id');
-                    const windowEl = document.getElementById(windowId);
-                    
-                    if (windowEl.style.display === 'flex') {
-                        // If open, close it
-                        closeWindow(windowId);
-                    } else {
-                        // If closed, open it and bring to front
-                        openWindow(windowId);
-                    }
-                };
+            // Set up all window controls
+            document.querySelectorAll('.window').forEach(windowEl => {
+                const id = windowEl.id;
+                const closeButton = windowEl.querySelector('.window-close');
+                const minimizeButton = windowEl.querySelector('.window-minimize');
+                const maximizeButton = windowEl.querySelector('.window-maximize');
+
+                if (closeButton) closeButton.onclick = () => closeWindow(id);
+                if (minimizeButton) minimizeButton.onclick = () => minimizeWindow(id);
+                if (maximizeButton) maximizeButton.onclick = () => maximizeWindow(id);
+            });
+            
+            // Apply dragging to widgets
+            document.querySelectorAll('.widget h1, .widget h2').forEach(header => {
+                makeDraggable(header);
             });
         }
         
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const date = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
-            document.getElementById('clock').textContent = `${time} ${date}`;
-        }
-        
-        // --- Widget Draggable Setup (moved after general window logic) ---
-        function initializeWidgets() {
-            const widgets = document.querySelectorAll('.widget');
-            widgets.forEach(widget => {
-                // Use the widget header (h1 or h2) as the drag handle
-                const dragHandle = widget.querySelector('h1, h2');
-                if (dragHandle) {
-                    // Make the entire widget draggable by its title
-                    makeDraggable(dragHandle);
-                    dragHandle.style.cursor = 'grab';
-                }
-            });
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            document.getElementById('clock').textContent = timeString + ' ' + now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         }
 
-        // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
+            // Initial window setup
             initializeWindows();
-            initializeWidgets();
+
+            // Dock event listeners
+            dockItems.forEach(item => {
+                const windowId = item.getAttribute('data-window-id');
+                item.onclick = () => {
+                    const windowEl = document.getElementById(windowId);
+                    if (windowEl && windowEl.style.display === 'flex') {
+                        closeWindow(windowId);
+                    } else {
+                        // Close any other regular windows, but not the widgets
+                        document.querySelectorAll('.window').forEach(win => {
+                            if (win.id !== windowId && win.id !== 'hobbies-window') closeWindow(win.id);
+                        });
+                        openWindow(windowId);
+                    }
+                };
+            });
+            
+            // Initialize dragging for headers
+            document.querySelectorAll('.window-header').forEach(makeDraggable);
+
+            // Clock setup
             updateClock();
             setInterval(updateClock, 1000);
             
-            // NOTE: The welcome modal is hidden by CSS now, so no need to explicitly close it here.
+            // Ensure Hobbies window is open by default, as requested
+            openWindow('hobbies-window');
         });
-        
-        // Prevent image dragging outside of the main functionality
-        document.addEventListener('dragstart', (e) => {
-             // Allow dragging on the window header, but prevent on all images
-             if (e.target.tagName === 'IMG' && !e.target.closest('.window-header')) {
-                e.preventDefault();
-            }
-        });
+
     </script>
 </body>
 </html>

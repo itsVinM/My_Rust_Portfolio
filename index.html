@@ -36,7 +36,7 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL --- */
+        /* --- DOCK STYLES: Right Side (Vertical) --- */
         .dock-container {
             position: absolute;
             top: 50%; 
@@ -58,24 +58,10 @@
             align-items: center;
         }
         
-        /* --- WIDGET LAYOUT: Left side, Absolute positioning for drag --- */
-        /* Widgets must now use absolute positioning for dragging */
-        .widget-layout {
-            position: absolute;
-            top: 50%;
-            left: 15%; /* Starting position shifted left */
-            transform: translate(-50%, -50%); /* Use this to center the group initially */
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            padding: 20px;
-            max-width: calc(100vw - 120px);
-            z-index: 5; /* Lower than windows */
-        }
-        
+        /* --- WIDGET STYLES (Draggable) --- */
         .widget {
-            position: absolute; /* Crucial for dragging */
-            padding: 0; /* Remove padding from container to put it in content */
+            position: absolute;
+            padding: 0;
             width: var(--widget-width);
             background: rgba(0, 0, 0, 0.35);
             backdrop-filter: blur(20px);
@@ -85,37 +71,61 @@
             color: #ffffff;
             font-weight: 500;
             z-index: 5;
-            transition: box-shadow 0.1s;
         }
 
         .widget-header {
-            padding: 8px 15px;
+            padding: 10px 20px; /* Slightly more padding for better drag area */
             cursor: grab;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
             border-radius: 18px 18px 0 0;
-            background-color: rgba(255, 255, 255, 0.05);
-            text-align: center;
         }
 
         .widget-content {
             padding: 15px 20px;
         }
         
-        /* Initial Widget Positioning (for the two widgets) */
+        /* Initial Widget Positioning (Set for clean overlap-free startup) */
         #tools-widget {
             top: 100px;
             left: 50px;
         }
         #projects-widget {
-            top: 450px;
+            top: 400px;
             left: 50px;
         }
 
+        .tools-widget .grid-cols-5 {
+             grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        
+        .tools-widget .flex-col {
+            padding: 5px 0; /* Add padding to icons for better spacing */
+        }
+        
+        .projects-widget .project-grid {
+             grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: 15px;
+        }
+        
+        .project-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .project-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
-        /* --- WINDOW STYLES --- */
+
+        /* --- WINDOW STYLES (Draggable) --- */
         .window {
             position: absolute;
             width: var(--window-width);
@@ -142,22 +152,8 @@
             max-height: 80vh;
             min-height: 300px;
         }
-
-        .window-header {
-            height: 30px;
-            background: rgba(200, 200, 200, 0.5);
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            cursor: grab;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 8px;
-        }
         
-        /* --- UTILITY STYLES (Clock, Dock items, etc.) --- */
+        /* Clock and general utility styles remain the same... */
         .clock {
             position: absolute;
             top: 15px;
@@ -168,59 +164,40 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
-        
-        .dock-icon-name {
-            color: white;
-            font-size: 11px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
-        
-        .projects-widget .project-grid {
-             grid-template-columns: repeat(2, minmax(0, 1fr));
-             gap: 15px;
-        }
-        
-        .project-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 10px; /* Reduced padding */
-            border-radius: 8px; /* Reduced border radius */
-            transition: background-color 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        
-        .project-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
 
-        /* Small screen adjustments */
+        /* Responsive adjustments for mobile screens */
         @media (max-width: 500px) {
             :root {
                 --dock-icon-size: 30px;
                 --widget-width: 90%;
             }
-            .widget-layout {
-                left: 50%;
-                padding-right: 20px;
+            .widget {
+                /* Widgets stack relatively on mobile */
+                position: static !important;
+                margin: 20px auto;
+                transform: none !important;
             }
             #tools-widget, #projects-widget {
-                 top: initial;
-                 left: 50%;
-                 transform: translateX(-50%);
-                 position: relative;
+                 top: initial !important;
+                 left: initial !important;
+                 /* Remove any initial hard-positioning on small screens */
             }
             .dock-container {
+                /* Dock moves to bottom center on mobile */
                 right: 50%;
                 top: initial;
                 bottom: 10px;
                 transform: translateX(50%);
-                flex-direction: row;
             }
             .dock {
                 flex-direction: row;
                 padding: 10px 20px;
+            }
+            .tools-widget .grid-cols-5 {
+                grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns on mobile */
+            }
+            .projects-widget .project-grid {
+                 grid-template-columns: repeat(1, minmax(0, 1fr)); /* 1 column on mobile */
             }
         }
     </style>
@@ -255,7 +232,7 @@
         </div>
 
         <div id="tools-widget" class="widget tools-widget">
-            <div class="widget-header">Tools 🔧 (Drag Me)</div>
+            <div class="widget-header">My Tools 🔧</div>
             <div class="widget-content">
                 <div class="grid grid-cols-5 gap-4">
                     <div class="flex flex-col items-center">
@@ -303,25 +280,25 @@
         </div>
         
         <div id="projects-widget" class="widget projects-widget">
-            <div class="widget-header">Projects 🚀 (Drag Me)</div>
+            <div class="widget-header">Projects 🚀</div>
             <div class="widget-content">
                 <div class="project-grid grid gap-3">
                     <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
                         <div class="project-item">
                             <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-10 h-10 object-contain rounded-md mr-3">
-                            <p class="text-xs text-white font-semibold">Powertrain Simulation Tool</p>
+                            <p class="text-sm text-white font-semibold">Powertrain Simulation Tool</p>
                         </div>
                     </a>
                     <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
                         <div class="project-item">
                             <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-10 h-10 object-contain rounded-md mr-3">
-                            <p class="text-xs text-white font-semibold">Validation Tracker App</p>
+                            <p class="text-sm text-white font-semibold">Validation Tracker App</p>
                         </div>
                     </a>
                     <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
                         <div class="project-item">
                             <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-10 h-10 object-contain rounded-md mr-3">
-                            <p class="text-xs text-white font-semibold">GameBoy Emulator in Rust</p>
+                            <p class="text-sm text-white font-semibold">GameBoy Emulator in Rust</p>
                         </div>
                     </a>
                 </div>
@@ -424,7 +401,7 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10000000!2d-10!3d40!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDEwJzAxLjEiTiAwMMKwMDAnMDAuMCJF!5e0!3m2!1sen!2ses!4v1625000000000!5m2!1sen!2ses"
                                     class="map-frame w-full h-full border-none"
                                     allowfullscreen=""
                                     loading="lazy"
@@ -569,18 +546,16 @@
 
             if (!draggableEl) return;
             
-            // Set initial absolute position if it's a widget and doesn't have inline styles yet
-            if (draggableEl.classList.contains('widget') && draggableEl.style.position !== 'absolute') {
-                draggableEl.style.position = 'absolute';
+            // Set position absolute for widgets if not already set (for desktop)
+            if (draggableEl.classList.contains('widget') && window.innerWidth > 500) {
+                 draggableEl.style.position = 'absolute';
             }
-
+            
             function handleMouseDown(e) {
-                // Ignore right-clicks
-                if (e.button !== 0) return; 
+                if (e.button !== 0 || window.innerWidth <= 500) return; // Disable drag on mobile/small screens
                 e.preventDefault();
                 isDragging = true;
                 
-                // Ensure it's the top element
                 zIndexCounter++;
                 draggableEl.style.zIndex = zIndexCounter;
 
@@ -597,13 +572,12 @@
                 let newX = e.clientX - offsetX;
                 let newY = e.clientY - offsetY;
 
-                // Clamp position to viewport edges (optional, but good practice)
                 newX = Math.max(0, Math.min(newX, window.innerWidth - draggableEl.offsetWidth));
                 newY = Math.max(0, Math.min(newY, window.innerHeight - draggableEl.offsetHeight));
                 
                 draggableEl.style.left = `${newX}px`;
                 draggableEl.style.top = `${newY}px`;
-                draggableEl.style.transform = 'none'; // Essential to override CSS transforms
+                draggableEl.style.transform = 'none'; 
             }
 
             function handleMouseUp() {
@@ -668,7 +642,7 @@
             // Clock setup
             updateClock();
             setInterval(updateClock, 1000);
-
+            
         });
 
     </script>

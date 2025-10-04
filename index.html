@@ -37,7 +37,7 @@
             background-position: center;
         }
 
-        /* --- DESKTOP DOCK STYLES (Default for > 800px): TOP, HORIZONTAL --- */
+        /* --- DOCK STYLES: TOP, HORIZONTAL (Fixed for all sizes) --- */
         .dock-container {
             position: absolute;
             top: 30px; /* TOP ALIGNMENT */
@@ -45,6 +45,8 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
+            /* Ensure it's responsive on smaller screens */
+            max-width: 95%; 
         }
 
         .dock {
@@ -73,17 +75,16 @@
             border-radius: 50%;
         }
         
-        /* Widget Layout - Centered for large screens */
+        /* WIDGET LAYOUT: Centered, pushed down from the top */
         .widget-layout {
             position: absolute;
-            top: 50%;
+            top: 55%; /* PUSHED DOWN significantly to ensure space from the dock */
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
-            flex-direction: row; /* Layout widgets horizontally on desktop */
-            flex-wrap: wrap; /* Allow wrapping if too wide */
-            justify-content: center;
-            align-items: flex-start; /* Align to the top of the container */
+            flex-direction: column; /* Stack widgets vertically */
+            justify-content: flex-start; /* Align widgets to the top of their container */
+            align-items: center;
             gap: 40px; /* Increased spacing between widgets */
             padding: 20px;
             max-width: 90vw; /* Keep layout contained */
@@ -91,65 +92,7 @@
             overflow-y: auto; /* Allow scrolling if widgets exceed screen height */
         }
 
-        /* --- TABLET/MOBILE STYLES (Focus on right-dock and centered content) --- */
-        @media (max-width: 800px){
-            :root {
-                --dock-icon-size: 40px; /* Slightly smaller icons */
-                --widget-width: 90%; /* Wider widgets for tablet */
-                --window-width: 95%; /* Larger windows */
-                --window-height: 95%;
-            }
-
-            /* DOCK: Fixed to the right, vertical, centered */
-            .dock-container {
-                top: 50% !important; 
-                bottom: auto;
-                left: auto !important;
-                right: 15px; /* Dock position on the right */
-                transform: translateY(-50%) !important;
-                width: auto !important; 
-                max-width: none !important;
-            }
-            
-            .dock {
-                padding: 15px 8px; /* Vertical padding */
-                gap: 15px;
-                flex-direction: column; /* Vertical stack */
-                border-radius: 15px; /* More rectangular */
-            }
-
-            /* Dock Active Dot: Move to the right of the icon for vertical layout */
-            .dock-item-active::after {
-                top: 50%;
-                left: 100%; 
-                transform: translateY(-50%);
-                margin-left: 5px; 
-                margin-top: 0;
-            }
-
-            /* WIDGETS: Center them, but ensure they don't overlap the dock */
-            .widget-layout {
-                top: 50% !important;
-                left: 45% !important; /* Shift slightly left to accommodate dock */
-                transform: translate(-50%, -50%) !important;
-                flex-direction: column; /* Stack widgets vertically */
-                width: calc(100vw - 100px); /* Limit width */
-                max-width: 95vw;
-                padding: 10px;
-                height: 100vh; /* Use full height for scrolling */
-            }
-            
-            /* Center window on the screen */
-            .window {
-                width: var(--window-width) !important;
-                height: var(--window-height) !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-            }
-        }
-        
-        /* General Dock Item Styles */
+        /* GENERAL DOCK ITEM STYLES (Kept consistent) */
         .dock-item {
             position: relative;
             display: flex;
@@ -185,11 +128,12 @@
 
         .dock-icon-name {
             color: white;
-            font-size: 11px; /* Slightly bigger font */
+            font-size: 11px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             text-align: center;
         }
 
+        /* WINDOW STYLES (Kept consistent) */
         .window {
             position: absolute;
             width: var(--window-width);
@@ -205,6 +149,9 @@
             display: none;
             flex-direction: column;
             z-index: 10;
+            top: 50%; /* Ensure windows are always centered */
+            left: 50%; 
+            transform: translate(-50%, -50%);
         }
 
         /* Specific style for the small, centered window */
@@ -213,9 +160,6 @@
             height: 550px;
             max-width: 95vw;
             max-height: 95vh;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
         }
 
         .window-header {
@@ -275,12 +219,13 @@
             border: none;
             border-radius: 12px;
         }
+
         
         .widget {
-            padding: 20px; /* Increased padding */
+            padding: 20px;
             background: rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(20px);
-            border-radius: 18px; /* Slightly more rounded */
+            border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             color: #ffffff;
@@ -290,16 +235,16 @@
         
         /* Tool and Project Specific Layouts */
         .tools-widget .grid-cols-5 {
-             grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
         }
         .projects-widget .project-grid {
-             grid-template-columns: repeat(2, minmax(0, 1fr)); /* Changed to 2 columns for more space */
-             gap: 15px; /* More spacing */
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
         }
         
         .project-item {
             background-color: rgba(255, 255, 255, 0.1);
-            padding: 15px; /* Increased padding */
+            padding: 15px;
             border-radius: 10px;
             transition: background-color 0.2s;
             cursor: pointer;
@@ -309,10 +254,16 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* ... [Modal and other unchanged styles] ... */
-
         .welcome-modal {
-            display: none; /* HIDE THE WELCOME MODAL */
+            display: none;
+        }
+
+        /* Small screen adjustment for dock icons */
+        @media (max-width: 500px) {
+            :root {
+                --dock-icon-size: 30px;
+                --widget-width: 90%;
+            }
         }
     </style>
 </head>

@@ -9,6 +9,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            /* Define a base window size for tablet/desktop */
+            --window-width: 80%;
+            --window-height: 80%;
+            --dock-icon-size: 50px;
+            --widget-width: 280px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #1a1a1a;
@@ -29,6 +37,73 @@
             background-position: center;
         }
 
+        /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
+        @media (max-width: 1024px) and (orientation: landscape), (max-width: 820px) and (orientation: portrait) {
+            :root {
+                --dock-icon-size: 45px; /* Slightly smaller icons */
+                --widget-width: 90%; /* Wider widgets for tablet */
+                --window-width: 95%; /* Larger windows */
+                --window-height: 95%;
+            }
+
+            /* Main Dock at the bottom, wider */
+            .dock-container {
+                position: absolute;
+                bottom: 20px; /* Elevated from the bottom */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .dock {
+                padding: 8px 15px;
+                gap: 10px; /* Reduced gap */
+            }
+
+            /* Reposition widgets for a more centralized layout */
+            .widget {
+                position: static; /* Remove absolute positioning */
+                margin: 10px auto;
+                width: var(--widget-width);
+            }
+
+            .widget-feed { order: 2; }
+            .widget-photo-memory { order: 1; }
+            .projects-widget { display: none !important; } /* Combine with Photo/Tool widget */
+
+            /* Center window on the screen for better tablet experience */
+            .window {
+                width: var(--window-width) !important;
+                height: var(--window-height) !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+
+            .widget-layout {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 100px; /* Space for the dock */
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                overflow-y: auto;
+            }
+        }
+        
+        /* General Styles */
+        
+        .dock-container {
+            position: absolute;
+            bottom: 30px; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
         .dock {
             padding: 8px 15px;
             background: rgba(43, 43, 43, 0.25);
@@ -38,7 +113,6 @@
             display: flex;
             gap: 15px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
         }
 
         .dock-item {
@@ -51,8 +125,8 @@
 
         .dock-icon {
             position: relative;
-            width: 50px;
-            height: 50px;
+            width: var(--dock-icon-size);
+            height: var(--dock-icon-size);
             background-color: #555;
             border-radius: 12px;
             transition: transform 0.2s ease-in-out, background-color 0.2s;
@@ -93,11 +167,11 @@
 
         .window {
             position: absolute;
-            width: 70%;
+            width: var(--window-width);
             max-width: 900px;
-            min-width: 500px;
-            height: 70%;
-            min-height: 400px;
+            min-width: 300px;
+            height: var(--window-height);
+            min-height: 300px;
             background: rgba(230, 230, 230, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 12px;
@@ -156,6 +230,7 @@
             font-size: 14px;
             font-weight: 500;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            z-index: 100;
         }
 
         .map-frame {
@@ -166,7 +241,6 @@
         }
 
         .widget {
-            position: absolute;
             padding: 15px;
             background: rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(20px);
@@ -175,78 +249,21 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             color: #ffffff;
             font-weight: 500;
+            width: var(--widget-width);
         }
         
-        .widget-feed {
-            top: 50px;
-            right: 50px;
-            width: 250px;
-            color: rgb(245, 245, 245);
+        /* Remove original absolute positioning for a flexible layout */
+        .widget-feed, .widget-photo-memory {
+             position: relative; 
+             margin-bottom: 20px;
         }
         
-        .widget-about-me {
-            top: 320px;
-            right: 50px;
-            width: 250px;
-            color: rgb(0, 0, 0);
-        }
-        
-        .widget-photo-memory {
-            top: 50px;
-            left: 50px;
-            width: 250px;
-            color: #ffffff;
-        }
-        
-        .projects-widget {
-            position: absolute; /* Already in the code */
-            top: 50px;
-            left: 50px;
-            width: 250px;
-            color: #ffffff;
-            /* Added */
-            min-height: 200px; 
+        /* Projects and Tools Widget */
+        .projects-tools-widget {
             display: flex;
             flex-direction: column;
             cursor: grab;
-        }
-
-        .projects-widget .projects-header {
-            cursor: grab;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .dock-window {
-            position: absolute;
-            top: 320px;
-            right: 50px;
-            width: 250px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(20px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .dock-window .dock {
-            background: none;
-            backdrop-filter: none;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            gap: 15px;
-        }
-        
-        .dock-window .dock-item {
-            gap: 5px;
+            width: var(--widget-width);
         }
 
         .project-item {
@@ -384,102 +401,102 @@
     <div class="desktop">
         <div id="clock" class="clock"></div>
         
-        <div class="widget widget-feed text-white-800">
-            <h2 class="text-lg font-bold mb-3">Hobbies</h2>
-            <div class="grid grid-cols-2 gap-2">
-                <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
-                <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
-            </div><br>
-            <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
-                <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+        <div class="widget-layout">
+             <div id="projects-tools-widget" class="widget projects-tools-widget">
+                <div class="flex flex-col md:flex-row gap-5">
+                     <div class="flex-1">
+                        <h1 class="text-lg font-bold mb-3">My Tools 🔧</h1>
+                        <div class="grid grid-cols-5 gap-3">
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Rust</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">C</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Python</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">JS</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Matlab</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Simulink</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">SimScape</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">PLECS</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Docker</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://orbstack.dev/img/icon256.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1">Orbstack</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 mt-4 md:mt-0">
+                        <h1 class="text-lg font-bold mb-3">Projects 🚀</h1>
+                        <div class="project-grid grid grid-cols-3 gap-4">
+                            <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
+                                    <p class="text-xs text-center text-white">Powertrain Sim</p>
+                                </div>
+                            </a>
+                            <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
+                                    <p class="text-xs text-center text-white">Validation Tracker</p>
+                                </div>
+                            </a>
+                            <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mb-1">
+                                    <p class="text-xs text-center text-white">GameBoy Sim</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-
             
-        </div>
-
-        
-        <div class="widget widget-photo-memory">
-            <h1 class="text-lg font-bold mb-3">My Tools</h1>
-            <div class="grid grid-cols-4 gap-4">
-                <div class="flex flex-col items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Rust</p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">C</p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Python</p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Javascript</p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Matlab</p>
-                </div>
-          
-                <div class="flex flex-col items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Simulink</p>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">SimScape</p>
-                </div>
-                
-                <div class="flex flex-col items-center">
-                    <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">PLECS</p>
-                </div>
-          
-
-                <div class="flex flex-col items-center">
-                    <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Docker</p>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <img src="https://orbstack.dev/img/icon256.png" class="w-12 h-12 object-contain rounded-md">
-                    <p class="text-xs text-center mt-1">Orbstack</p>
-                </div>
-            
-            </div>
-        </div>
-
-        <div id="projects-widget" class="widget projects-widget">
-            <div class="projects-header">
-                <h1 class="text-lg font-bold mb-3">Projects</h1>
-            </div>
-            <div class="project-grid grid grid-cols-2 gap-4">
-                <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                    <div class="project-item flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-colors">
-                        <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-16 h-16 object-contain rounded-md mb-2">
-                        <p class="text-xs text-center text-white">Powertrain analysis App</p>
+            <div class="widget widget-feed text-white-800">
+                <h2 class="text-lg font-bold mb-3">Hobbies & Memories 🏍️🗺️</h2>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                     <div class="flex flex-col items-center">
+                        <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
+                        <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
                     </div>
-                </a>
-                <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                    <div class="project-item flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-colors">
-                         <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-16 h-16 object-contain rounded-md mb-2">
-                        <p class="text-xs text-center text-white">Validation tracking</p>
+                    <div class="flex flex-col items-center">
+                        <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
+                        <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
                     </div>
-                </a>
-                <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
-                    <div class="project-item flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-colors">
-                        <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-16 h-16 object-contain rounded-md mb-2">
-                        <p class="text-xs text-center text-white">GameBoy Sim</p>
-                    </div>
-                </a>
+                </div>
+                <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                </div>
             </div>
         </div>
         
-        <div class="dock-window">
+        <div class="dock-container">
             <div class="dock">
                 <div class="dock-item" data-window-id="experience-window">
                     <div class="dock-icon">
@@ -568,7 +585,7 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.1651034409393!2d2.177073115372439!3d41.38740527926457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a498b0f80a3199%3A0x8b65e91a0a5b281d!2sPla%C3%A7a%20de%20Catalunya!5e0!3m2!1sen!2ses!4v1628168288591!5m2!1sen!2ses"
+                        <iframe src="https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed"
                                     class="map-frame"
                                     allowfullscreen=""
                                     loading="lazy"
@@ -578,15 +595,15 @@
                             <h2 class="text-xl font-semibold">Contact Information</h2>
                             <p class="text-sm mt-2">Feel free to reach out to me via email or connect with me on social media.</p>
                             <ul class="list-disc list-inside mt-2 text-sm">
-                                <div class="contact-icons flex justify-center items-center gap-6">
+                                <div class="contact-icons flex justify-center items-center gap-6 mt-4">
                                     <a href="mailto:vincentiu.mocanu00@gmail.com" target="_blank">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Mail_%28iOS%29.svg" alt="Email" style="width: 20px; height: 20px;">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Mail_%28iOS%29.svg" alt="Email" style="width: 25px; height: 25px;">
                                     </a>
-                                    <a href="https://www.linkedin.com/in/itsvinm">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 20px; height: 20px;">
+                                    <a href="https://www.linkedin.com/in/itsvinm" target="_blank">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 25px; height: 25px;">
                                     </a>
                                     <a href="https://github.com/itsVinM" target="_blank">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub" style="width: 20px; height: 20px;">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub" style="width: 25px; height: 25px;">
                                     </a>
                                 </div>
                             </ul>
@@ -594,7 +611,6 @@
                     </div>
                 `,
             },
-            // FIXED: Added content for 'about-window'
             {
                 id: 'about-window',
                 title: 'More About Me',
@@ -629,7 +645,8 @@
         function createWindowEvent(data) {
             const windowEl = document.createElement('div');
             windowEl.id = data.id;
-            windowEl.classList.add('window', 'absolute', 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+            // Removed transform classes for more predictable positioning on iPad
+            windowEl.classList.add('window', 'absolute', 'top-1/2', 'left-1/2'); 
 
             let headerHtml = `
                 <div class="window-header">
@@ -689,6 +706,16 @@
             let offsetX, offsetY;
             const windowEl = header.closest('.window') || header.closest('.widget');
 
+            // Prevent dragging on small screens for a more native touch experience,
+            // or simplify dragging implementation for touch devices.
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+            if (isTouchDevice && windowEl.classList.contains('window')) {
+                // For windows, we keep the close functionality but disable dragging to 
+                // enforce the centered/maximized window look on smaller screens.
+                return; 
+            }
+            
+            // Standard dragging for desktop/widgets
             header.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 header.style.cursor = 'grabbing';
@@ -714,7 +741,8 @@
 
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // Use short time format for compactness
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
             const date = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
             document.getElementById('clock').textContent = `${date} ${time}`;
         }
@@ -728,8 +756,11 @@
                 makeDraggable(header);
             }
 
-            // FIXED: Added event listener for the close button on the new window
+            // Added event listener for the close button on the new window
             newWindow.querySelector('.window-close').addEventListener('click', () => closeWindow(data.id));
+            
+            // Re-center windows after creation (needed because initial CSS was based on center-transform)
+            newWindow.style.transform = 'translate(-50%, -50%)'; 
         });
 
         dockItems.forEach(item => {
@@ -742,16 +773,25 @@
         window.onload = () => {
             document.getElementById('welcome-modal').style.display = 'flex';
             
-            const projectsWidget = document.getElementById('projects-widget');
-            const projectsHeader = projectsWidget.querySelector('.projects-header');
-            if(projectsHeader) {
-                makeDraggable(projectsHeader);
+            // Make widgets draggable (but only on desktop to avoid conflict with scrolling on tablet)
+            if (window.innerWidth > 1024) {
+                 const projectsToolsWidget = document.getElementById('projects-tools-widget');
+                 if(projectsToolsWidget) {
+                     makeDraggable(projectsToolsWidget);
+                 }
             }
         };
 
         document.querySelector('.welcome-modal-close').addEventListener('click', () => {
             document.getElementById('welcome-modal').style.display = 'none';
         });
+        
+        // FIX: Removed the incorrect googleusercontent.com/maps.google.com/0 iframe src and used a standard embed URL for Barcelona
+        const contactIframe = document.querySelector('#contact-window iframe');
+        if(contactIframe) {
+            contactIframe.src = "https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed";
+        }
+
     </script>
 </body>
 </html>

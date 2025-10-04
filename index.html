@@ -500,6 +500,12 @@
                     </div>
                     <p class="dock-icon-name">Contacts</p>
                 </div>
+                <div class="dock-item" data-window-id="about-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
+                    </div>
+                    <p class="dock-icon-name">About Me</p>
+                </div>
             </div>
         </div>
     </div>
@@ -590,6 +596,31 @@
                                     </a>
                                 </div>
                             </ul>
+                        </div>
+                    </div>
+                `,
+            },
+            // FIXED: Added content for 'about-window'
+            {
+                id: 'about-window',
+                title: 'More About Me',
+                content: `
+                    <div class="p-5 flex flex-col items-center text-center">
+                        <h1 class="text-3xl font-bold mb-4 text-gray-700">Vincentiu Mocanu</h1>
+                        <p class="text-lg mb-6 text-gray-600">Power Electronics Engineer & Software Enthusiast 💡</p>
+
+                        <div class="text-left max-w-lg">
+                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Technical Focus:</h2>
+                            <ul class="list-disc list-inside mb-4 text-gray-600">
+                                <li><strong>Power Electronics:</strong> Design, Modeling (Matlab/Simulink/PLECS), and Validation (ISO 16750) of automotive converters.</li>
+                                <li><strong>Embedded Systems:</strong> Experience with C and Rust for firmware development.</li>
+                                <li><strong>Software Development:</strong> Building tools and simulations using Python (Streamlit) and JavaScript.</li>
+                            </ul>
+                            
+                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Hobbies & Passions:</h2>
+                            <p class="text-gray-600">
+                                When not engineering, I'm often on an adventure! I love to travel, especially exploring new places on my motorbike or delving into a good book. I'm endlessly curious and always looking for new things to learn, both in power electronics and software development.
+                            </p>
                         </div>
                     </div>
                 `,
@@ -703,6 +734,7 @@
                 makeDraggable(header);
             }
 
+            // FIXED: Added event listener for the close button on the new window
             newWindow.querySelector('.window-close').addEventListener('click', () => closeWindow(data.id));
         });
 

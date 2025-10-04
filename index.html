@@ -37,43 +37,43 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Matches requested layout) --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL --- */
         .dock-container {
             position: absolute;
-            top: 50%; /* Center vertically */
+            top: 50%;
             bottom: auto;
-            right: 20px; /* Fixed distance from the right edge */
+            right: 20px;
             left: auto;
-            transform: translateY(-50%); /* Adjust for vertical centering */
+            transform: translateY(-50%);
             z-index: 1000;
         }
 
         .dock {
-            padding: 20px 10px; /* Vertical padding is larger */
+            padding: 20px 10px;
             background: rgba(43, 43, 43, 0.25);
             backdrop-filter: blur(20px);
             border-radius: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            flex-direction: column; /* STACK ICONS VERTICALLY */
+            flex-direction: column;
             gap: 20px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            align-items: center; /* Center icons within the dock */
+            align-items: center;
         }
         
-        /* Widget Layout - Shifted left and centered to avoid the dock */
+        /* Widget Layout: Stacked Left */
         .widget-layout {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
-            flex-direction: column; /* Stack widgets vertically */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 40px;
             padding: 20px;
-            max-width: calc(100vw - 120px); /* Leave space for the dock on the right */
+            max-width: calc(100vw - 120px);
             max-height: 90vh;
             overflow-y: auto;
             padding-right: 100px;
@@ -101,27 +101,25 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Hobbies Widget as a Window (Popup) */
+        /* Hobbies Widget Positioning (Top-Right) */
         #hobbies-window {
-            width: 450px; /* Specific size for the pop-up */
+            width: 450px; 
             height: 300px;
             max-width: 90vw;
-            background: rgba(0, 0, 0, 0.9); /* Dark background for modal */
+            background: rgba(0, 0, 0, 0.9);
             color: #ffffff;
-            z-index: 2000; /* High z-index to be on top */
+            z-index: 2000;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            top: 60px; /* Pushed down from the top edge */
+            right: 120px; /* Pushed left to avoid the dock */
+            left: auto;
+            transform: none;
         }
         
         #hobbies-window .window-content {
             padding: 15px;
             color: #ccc;
-        }
-
-        .window.small-centered {
-            width: 800px;
-            height: 550px;
-            max-width: 95vw;
-            max-height: 95vh;
         }
 
         .window-header {
@@ -131,19 +129,6 @@
             align-items: center;
             padding: 0 10px;
             cursor: grab;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .window-controls > div {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            cursor: pointer;
         }
 
         .window-close { background-color: #ff5f56; }
@@ -175,14 +160,7 @@
             z-index: 100;
         }
 
-        .map-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 12px;
-        }
-
-        /* --- WIDGET STYLES --- */
+        /* --- WIDGET STYLES (Used for Tools, Projects, and About Me) --- */
         .widget {
             padding: 20px; 
             background: rgba(0, 0, 0, 0.25);
@@ -194,39 +172,30 @@
             font-weight: 500;
             width: var(--widget-width);
         }
-        
+
+        /* Styling for the new About Me widget */
+        .about-widget .info-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .about-widget .info-section:last-child {
+            border-bottom: none;
+        }
+        .about-widget .info-section span {
+            font-weight: 400;
+            color: #ccc;
+            text-align: right;
+        }
+
         /* General Dock Item Styles */
-        .dock-item {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .dock-icon {
-            position: relative;
-            width: var(--dock-icon-size);
-            height: var(--dock-icon-size);
-            background-color: #555;
-            border-radius: 12px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .dock-icon:hover {
-            transform: scale(1.1);
-            background-color: #666;
-        }
-
         .dock-item-active::after {
             content: '';
             position: absolute;
             top: 50%;
-            left: 100%; /* Dot is on the right of the icon */
+            left: 100%;
             transform: translateY(-50%);
             margin-left: 5px; 
             margin-top: 0;
@@ -236,50 +205,19 @@
             border-radius: 50%;
         }
         
-        .dock-icon-img {
-            width: 70%;
-            height: 70%;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .dock-icon-name {
-            color: white;
-            font-size: 11px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
-
-        /* Tool and Project Specific Layouts */
-        .tools-widget .grid-cols-5 {
-             grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-        .projects-widget .project-grid {
-             grid-template-columns: repeat(2, minmax(0, 1fr));
-             gap: 15px;
-        }
-        
-        .project-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-        
-        .project-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .welcome-modal {
-            display: none;
-        }
-        
-        /* Small screen adjustment for dock icons */
+        /* Small screen adjustment */
         @media (max-width: 500px) {
             :root {
                 --dock-icon-size: 30px;
                 --widget-width: 90%;
+            }
+            #hobbies-window {
+                top: 80px; 
+                right: 80px;
+                width: 90vw;
+            }
+            .widget-layout {
+                padding-right: 20px;
             }
         }
     </style>
@@ -310,17 +248,29 @@
                     </div>
                     <p class="dock-icon-name">Contacts</p>
                 </div>
-                <div class="dock-item" data-window-id="about-window">
-                    <div class="dock-icon">
-                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
-                    </div>
-                    <p class="dock-icon-name">About Me</p>
                 </div>
-            </div>
         </div>
 
         <div class="widget-layout">
             
+            <div id="about-me-widget" class="widget about-widget">
+                <h1 class="text-xl font-bold mb-4 text-center">Vincentiu Mocanu</h1>
+                <p class="text-sm font-light text-center mb-4 text-gray-300">Power Electronics Engineer & Software Enthusiast 💡</p>
+                
+                <div class="info-section">
+                    <strong class="text-white">Focus:</strong>
+                    <span>Power Systems & Validation (ISO 16750)</span>
+                </div>
+                <div class="info-section">
+                    <strong class="text-white">Code:</strong>
+                    <span>Rust, C, Python, MATLAB/Simulink</span>
+                </div>
+                <div class="info-section">
+                    <strong class="text-white">Passion:</strong>
+                    <span>Embedded Systems & Automotive Tech</span>
+                </div>
+            </div>
+
             <div id="tools-widget" class="widget tools-widget">
                 <h1 class="text-xl font-bold mb-4">My Tools 🔧</h1>
                 <div class="grid grid-cols-5 gap-4">
@@ -500,30 +450,6 @@
                         </div>
                     </div>
                 `,
-            },
-            {
-                id: 'about-window',
-                title: 'More About Me',
-                content: `
-                    <div class="p-5 flex flex-col items-center text-center">
-                        <h1 class="text-3xl font-bold mb-4 text-gray-700">Vincentiu Mocanu</h1>
-                        <p class="text-lg mb-6 text-gray-600">Power Electronics Engineer & Software Enthusiast 💡</p>
-
-                        <div class="text-left max-w-lg">
-                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Technical Focus:</h2>
-                            <ul class="list-disc list-inside mb-4 text-gray-600">
-                                <li><strong>Power Electronics:</strong> Design, Modeling (Matlab/Simulink/PLECS), and Validation (ISO 16750) of automotive converters.</li>
-                                <li><strong>Embedded Systems:</strong> Experience with C and Rust for firmware development.</li>
-                                <li><strong>Software Development:</strong> Building tools and simulations using Python (Streamlit) and JavaScript.</li>
-                            </ul>
-                            
-                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Hobbies & Passions:</h2>
-                            <p class="text-gray-600">
-                                When not engineering, I'm often on an adventure! I love to travel, especially exploring new places on my motorbike or delving into a good book. I'm endlessly curious and always looking for new things to learn, both in power electronics and software development.
-                            </p>
-                        </div>
-                    </div>
-                `,
             }
         ];
 
@@ -575,6 +501,7 @@
             const dockItem = document.querySelector(`[data-window-id="${id}"]`);
             if (dockItem) {
                 dockItems.forEach(item => item.classList.remove('dock-item-active'));
+                item.classList.remove('dock-item-active'); // Clear active state on all items
                 dockItem.classList.add('dock-item-active');
             }
         }
@@ -687,10 +614,12 @@
                 const windowId = item.getAttribute('data-window-id');
                 item.onclick = () => {
                     const windowEl = document.getElementById(windowId);
+                    
+                    // Toggle visibility of the target window/pop-up
                     if (windowEl && windowEl.style.display === 'flex') {
                         closeWindow(windowId);
                     } else {
-                        // Close only regular windows before opening a new one
+                        // Close any other regular windows before opening a new one
                         document.querySelectorAll('.window').forEach(win => {
                             if (win.id !== windowId) closeWindow(win.id);
                         });

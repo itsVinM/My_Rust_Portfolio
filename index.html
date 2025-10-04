@@ -37,7 +37,7 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Matches requested layout) --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Kept the same) --- */
         .dock-container {
             position: absolute;
             top: 50%; /* Center vertically */
@@ -49,31 +49,31 @@
         }
 
         .dock {
-            padding: 20px 10px; /* Vertical padding is larger */
+            padding: 20px 10px;
             background: rgba(43, 43, 43, 0.25);
             backdrop-filter: blur(20px);
             border-radius: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            flex-direction: column; /* STACK ICONS VERTICALLY */
+            flex-direction: column;
             gap: 20px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            align-items: center; /* Center icons within the dock */
+            align-items: center;
         }
         
-        /* Widget Layout - Shifted left and centered to avoid the dock */
+        /* Widget Layout (Kept the same) */
         .widget-layout {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
-            flex-direction: column; /* Stack widgets vertically */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 40px;
             padding: 20px;
-            max-width: calc(100vw - 120px); /* Leave space for the dock on the right */
+            max-width: calc(100vw - 120px);
             max-height: 90vh;
             overflow-y: auto;
             padding-right: 100px;
@@ -101,15 +101,21 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Hobbies Widget as a Window (Popup) */
+        /* Hobbies Widget as a Window (Popup) - NEW POSITIONING */
         #hobbies-window {
-            width: 450px; /* Specific size for the pop-up */
+            width: 450px; 
             height: 300px;
             max-width: 90vw;
-            background: rgba(0, 0, 0, 0.9); /* Dark background for modal */
+            background: rgba(0, 0, 0, 0.9);
             color: #ffffff;
-            z-index: 2000; /* High z-index to be on top */
+            z-index: 2000;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            /* TOP-RIGHT POSITIONING */
+            top: 60px; /* Pushed down from the top edge */
+            right: 120px; /* Pushed left to avoid the dock */
+            left: auto; /* Ensure no left influence */
+            transform: none; /* Crucial: removes the translate(-50%, -50%) centering */
         }
         
         #hobbies-window .window-content {
@@ -117,12 +123,7 @@
             color: #ccc;
         }
 
-        .window.small-centered {
-            width: 800px;
-            height: 550px;
-            max-width: 95vw;
-            max-height: 95vh;
-        }
+        /* ... other window styles ... */
 
         .window-header {
             height: 30px;
@@ -226,7 +227,7 @@
             content: '';
             position: absolute;
             top: 50%;
-            left: 100%; /* Dot is on the right of the icon */
+            left: 100%;
             transform: translateY(-50%);
             margin-left: 5px; 
             margin-top: 0;
@@ -280,6 +281,12 @@
             :root {
                 --dock-icon-size: 30px;
                 --widget-width: 90%;
+            }
+            #hobbies-window {
+                /* Adjust positioning for smaller screens to stay right/top */
+                top: 80px; 
+                right: 80px;
+                width: 90vw;
             }
         }
     </style>

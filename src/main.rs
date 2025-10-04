@@ -13,7 +13,7 @@ async fn main(){
         .fallback_service(static_files_service);
 
     //Run application with hyper, listining globally on port 3000
-    let addr = SocketAddr::from(([0,0,0,0], 3000));
+    let addr = SocketAddr::from(([0,0,0,0], 5000));
     println!("listening on {}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();

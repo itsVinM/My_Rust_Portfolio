@@ -113,9 +113,12 @@
             cursor: pointer;
         }
 
-        .dock-icon:hover {
+        /* ACCESSIBILITY: Add visible focus style */
+        .dock-icon:hover, .dock-icon:focus-visible {
             transform: none; /* No hover jump in menu bar */
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid #5C7FFB; /* Bright blue focus ring */
+            outline-offset: 2px;
         }
         
         .dock-icon-img {
@@ -167,9 +170,13 @@
             transition: opacity 0.2s, transform 0.2s;
         }
         
-        .widget-trigger:hover {
+        /* ACCESSIBILITY: Add visible focus style */
+        .widget-trigger:hover, .widget-trigger:focus-visible {
             opacity: 1;
             transform: scale(1.1);
+            outline: 2px solid #5C7FFB;
+            outline-offset: 2px;
+            border-radius: 50%;
         }
         
         /* Window Styles */
@@ -210,6 +217,13 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
             cursor: pointer;
         }
+
+        /* ACCESSIBILITY: Add visible focus style to window controls */
+        .window-controls > div:focus-visible {
+            outline: 2px solid #5C7FFB;
+            outline-offset: 1px;
+        }
+
 
         .window-close { background-color: #ff5f56; }
         .window-minimize { background-color: #ffbd2e; }
@@ -351,6 +365,14 @@
             100% {
                 transform: scale(1);
                 opacity: 1;
+            }
+        }
+        
+        /* ACCESSIBILITY: Disable pulse animation for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .notification-dot {
+                animation: none;
+                transform: scale(1);
             }
         }
     </style>

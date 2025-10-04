@@ -37,7 +37,7 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Matches Screenshot 2025-10-04) --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Matches requested layout) --- */
         .dock-container {
             position: absolute;
             top: 50%; /* Center vertically */
@@ -76,10 +76,8 @@
             max-width: calc(100vw - 120px); /* Leave space for the dock on the right */
             max-height: 90vh;
             overflow-y: auto;
-            /* Added padding-right adjustment for better look */
             padding-right: 100px;
         }
-
 
         /* --- WINDOW & POPUP STYLES --- */
 
@@ -184,7 +182,7 @@
             border-radius: 12px;
         }
 
-        /* --- WIDGET STYLES (Moved out of widget-layout for this specific layout) --- */
+        /* --- WIDGET STYLES --- */
         .widget {
             padding: 20px; 
             background: rgba(0, 0, 0, 0.25);
@@ -220,7 +218,7 @@
         }
 
         .dock-icon:hover {
-            transform: scale(1.1); /* Removed translateY for vertical dock */
+            transform: scale(1.1);
             background-color: #666;
         }
 
@@ -275,6 +273,14 @@
 
         .welcome-modal {
             display: none;
+        }
+        
+        /* Small screen adjustment for dock icons */
+        @media (max-width: 500px) {
+            :root {
+                --dock-icon-size: 30px;
+                --widget-width: 90%;
+            }
         }
     </style>
 </head>
@@ -410,8 +416,8 @@
                     </div>
                     <h3 class="font-semibold text-sm mb-2 text-center mt-3">Travel Memories</h3>
                     <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
-                        <img src="static/Istanbul.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
-                        <img src="static/Kapadokia.jpg" class="w-full h-20 object-cover rounded-md shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1541315610731-9f9f8c6b7531?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1594956328906-8d626353d2d2?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
                     </div>
                 </div>
             </div>
@@ -421,7 +427,6 @@
 
     <script>
         const windowsData = [ 
-            // Removed hobbies since it's now a dedicated window
             {
                 id: 'experience-window',
                 title: 'Work Experience',
@@ -470,7 +475,7 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3164.7175891795367!2d2.154944883460678!3d41.38506399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a498167660c1d1%3A0x6b1c4b1d1f0e4b1c!2sBarcelona%2C%20Spain!5e0!3m2!1sen!2ses!4v1717618991234!5m2!1sen!2ses"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.828859345262!2d2.1524314!3d41.3850638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4m0!3e0!5m2!1sen!2ses"
                                     class="map-frame"
                                     allowfullscreen=""
                                     loading="lazy"
@@ -519,13 +524,6 @@
                         </div>
                     </div>
                 `,
-            },
-            // The Hobbies window data is initialized separately but added here for completeness
-            {
-                id: 'hobbies-window',
-                title: 'Hobbies & Memories 🏍️🗺️',
-                content: document.getElementById('hobbies-window').querySelector('.window-content').innerHTML,
-                className: 'small-centered',
             }
         ];
 
@@ -536,7 +534,7 @@
         
         function createWindowEvent(data) {
             const existingEl = document.getElementById(data.id);
-            if (existingEl) return existingEl; // Hobbies window already exists in HTML
+            if (existingEl) return existingEl;
 
             const windowEl = document.createElement('div');
             windowEl.id = data.id;
@@ -598,13 +596,11 @@
         function minimizeWindow(id) {
             const windowEl = document.getElementById(id);
             if (windowEl) {
-                // Simple minimize: hide the window but keep the dock-item active status
                 windowEl.style.display = 'none';
             }
         }
 
         function maximizeWindow(id) {
-            // Simple implementation: toggle fullscreen-like appearance for demonstration
             const windowEl = document.getElementById(id);
             if (windowEl) {
                  windowEl.classList.toggle('fullscreen');
@@ -614,14 +610,9 @@
         function makeDraggable(header) {
             let isDragging = false;
             let offsetX, offsetY;
-            const windowEl = header.closest('.window') || header.closest('.widget');
+            const windowEl = header.closest('.window');
 
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
-            if (isTouchDevice && windowEl.classList.contains('window')) {
-                // Allow dragging on touch devices only for windows, but not for widgets
-                // This is a complex trade-off, simplifying here by keeping default behavior 
-                // but ensuring windows are properly positioned via CSS.
-            }
+            if (!windowEl) return;
             
             function handleMouseDown(e) {
                 e.preventDefault();
@@ -630,7 +621,6 @@
                 offsetX = e.clientX - rect.left;
                 offsetY = e.clientY - rect.top;
 
-                // Bring to front
                 zIndexCounter++;
                 windowEl.style.zIndex = zIndexCounter;
 
@@ -648,7 +638,6 @@
                 
                 windowEl.style.left = `${newX}px`;
                 windowEl.style.top = `${newY}px`;
-                // Clear translate to take over absolute positioning
                 windowEl.style.transform = 'none'; 
             }
 
@@ -663,7 +652,7 @@
         }
 
         function initializeWindows() {
-            // Initialize windows from data, excluding the pre-existing hobbies window
+            // Initialize windows from data, skipping the pre-existing hobbies window
             windowsData.filter(d => d.id !== 'hobbies-window').forEach(data => {
                 createWindowEvent(data);
             });
@@ -680,10 +669,8 @@
                 if (maximizeButton) maximizeButton.onclick = () => maximizeWindow(id);
             });
             
-            // Apply dragging to widgets
-            document.querySelectorAll('.widget h1, .widget h2').forEach(header => {
-                makeDraggable(header);
-            });
+            // Apply dragging to headers
+            document.querySelectorAll('.window-header').forEach(makeDraggable);
         }
         
         function updateClock() {
@@ -693,7 +680,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial window setup
             initializeWindows();
 
             // Dock event listeners
@@ -704,18 +690,15 @@
                     if (windowEl && windowEl.style.display === 'flex') {
                         closeWindow(windowId);
                     } else {
-                        // Close any other regular windows, but not the widgets
+                        // Close only regular windows before opening a new one
                         document.querySelectorAll('.window').forEach(win => {
-                            if (win.id !== windowId && win.id !== 'hobbies-window') closeWindow(win.id);
+                            if (win.id !== windowId) closeWindow(win.id);
                         });
                         openWindow(windowId);
                     }
                 };
             });
             
-            // Initialize dragging for headers
-            document.querySelectorAll('.window-header').forEach(makeDraggable);
-
             // Clock setup
             updateClock();
             setInterval(updateClock, 1000);

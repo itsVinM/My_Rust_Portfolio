@@ -37,38 +37,38 @@
             background-position: center;
         }
 
-        /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
-        @media (max-width: 1024px) and (orientation: landscape), (max-width: 820px) and (orientation: portrait) {
+        /* --- IPAD/TABLET STYLES (Focus on compactness) --- */
+        @media (max-width: 1024px) {
             :root {
-                --dock-icon-size: 45px; /* Slightly smaller icons */
-                --widget-width: 90%; /* Wider widgets for tablet */
-                --window-width: 95%; /* Larger windows */
+                --dock-icon-size: 45px;
+                --widget-width: 90%; 
+                --window-width: 95%; 
                 --window-height: 95%;
             }
 
             /* Main Dock at the bottom, wider */
             .dock-container {
                 position: absolute;
-                bottom: 20px; /* Elevated from the bottom */
+                bottom: 10px; /* Lower on mobile */
                 left: 50%;
                 transform: translateX(-50%);
-                width: 95%; /* Make it wider on tablets */
+                width: 95%;
                 max-width: 600px;
             }
             
             .dock {
                 padding: 8px 15px;
-                gap: 10px; /* Reduced gap */
+                gap: 10px;
                 justify-content: space-around;
             }
 
-            /* Widget Layout for smaller screens */
+            /* Widget Layout for smaller screens: Stacked, Scrollable */
             .widget-layout {
                 position: absolute;
-                top: 60px;
+                top: 45px; /* Account for smaller clock */
                 left: 0;
                 right: 0;
-                bottom: 100px; /* Space for the dock */
+                bottom: 80px; /* Space for the dock */
                 padding: 10px;
                 display: flex;
                 flex-direction: column;
@@ -77,20 +77,19 @@
                 overflow-y: auto;
             }
             
-            /* Ensure widgets are full width in the layout */
-            .widget {
-                position: relative; /* Ensure it stays in flow */
-                width: var(--widget-width);
-                max-width: 700px; /* Cap size on wide tablets */
-            }
-
-            /* Center window on the screen for better tablet experience */
+            /* Window override for mobile: always full screen and centered */
             .window {
-                width: var(--window-width) !important;
-                height: var(--window-height) !important;
+                width: 95% !important;
+                height: 95% !important;
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
+            }
+
+            .clock {
+                font-size: 12px;
+                top: 10px;
+                right: 10px;
             }
         }
         
@@ -167,11 +166,8 @@
 
         .window {
             position: absolute;
-            width: var(--window-width);
-            max-width: 900px;
-            min-width: 300px;
-            height: var(--window-height);
-            min-height: 300px;
+            width: 800px; /* Default large size for desktop */
+            height: 500px; /* Default large size for desktop */
             background: rgba(230, 230, 230, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 12px;
@@ -180,7 +176,14 @@
             display: none;
             flex-direction: column;
             z-index: 10;
+            /* Ensure the window starts off-screen until opened and positioned by JS */
+            top: -1000px; 
+            left: -1000px;
+            /* Allow dragging/touching anywhere in the window to activate it */
+            touch-action: none;
         }
+        
+        /* The media query above ensures mobile devices override these sizes */
 
         .window-header {
             height: 30px;
@@ -189,6 +192,7 @@
             align-items: center;
             padding: 0 10px;
             cursor: grab;
+            flex-shrink: 0;
         }
 
         .window-controls {
@@ -202,6 +206,7 @@
             border-radius: 50%;
             border: 1px solid rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            transition: background-color 0.1s;
         }
 
         .window-close { background-color: #ff5f56; }
@@ -217,7 +222,7 @@
         
         .window-content {
             flex-grow: 1;
-            padding: 20px;
+            padding: 0; /* Removing default padding to let inner content control it */
             color: #333;
             overflow-y: auto;
         }
@@ -237,7 +242,19 @@
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 12px;
+            border-radius: 0; /* Removed border radius on iframe */
+        }
+
+        .widget-layout {
+            position: absolute;
+            top: 60px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-right: 15px;
+            /* Allow widgets to be dragged on desktop */
+            touch-action: none; 
         }
 
         .widget {
@@ -250,14 +267,32 @@
             color: #ffffff;
             font-weight: 500;
             width: var(--widget-width);
+            position: relative; /* Make widgets positionable for dragging */
+            cursor: grab;
         }
         
-        /* Tool and Project Specific Layouts for better widget flow */
-        .tools-widget .grid-cols-5 {
-             grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-        .projects-widget .project-grid {
-             grid-template-columns: repeat(3, minmax(0, 1fr));
+        @media (min-width: 1025px) {
+             /* On Desktop, make widgets absolute for free placement */
+            .widget {
+                position: absolute;
+                cursor: grab;
+                transition: none; /* Disable transitions when dragging */
+            }
+            .widget-layout {
+                position: static;
+                display: block;
+                padding: 15px;
+            }
+             /* Initial Desktop Positions for Widgets */
+            #tools-widget { top: 60px; left: 15px; }
+            #projects-widget { top: 60px; left: 320px; }
+            .widget-feed { top: 320px; left: 15px; }
+
+            /* Ensure Experience window starts centered on desktop */
+            .experience-window-size {
+                width: 900px;
+                height: 600px;
+            }
         }
         
         .project-item {
@@ -274,8 +309,21 @@
 
         .photo-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            padding: 20px;
+            overflow-y: auto; /* Allow scrolling inside gallery content */
+        }
+        
+        /* Ensure content in Experience window fills the space */
+        #experience-window .window-content {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #experience-window h1 {
+            flex-shrink: 0;
             padding: 20px;
         }
 
@@ -293,7 +341,7 @@
 
         .photo-item img {
             width: 100%;
-            height: 150px;
+            height: 120px;
             object-fit: cover;
         }
 
@@ -302,26 +350,6 @@
             padding: 10px;
             font-size: 14px;
             color: #333;
-        }
-
-        .photo-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
-
-        .photo-modal img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         .welcome-modal {

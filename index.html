@@ -37,14 +37,14 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Kept the same) --- */
         .dock-container {
             position: absolute;
-            top: 50%;
+            top: 50%; /* Center vertically */
             bottom: auto;
-            right: 20px;
+            right: 20px; /* Fixed distance from the right edge */
             left: auto;
-            transform: translateY(-50%);
+            transform: translateY(-50%); /* Adjust for vertical centering */
             z-index: 1000;
         }
 
@@ -61,7 +61,7 @@
             align-items: center;
         }
         
-        /* Widget Layout: Stacked Left (for About, Tools, Projects) */
+        /* Widget Layout (Kept the same) */
         .widget-layout {
             position: absolute;
             top: 50%;
@@ -76,11 +76,10 @@
             max-width: calc(100vw - 120px);
             max-height: 90vh;
             overflow-y: auto;
-            /* Adjust padding to account for the right dock */
             padding-right: 100px;
         }
 
-        /* --- WINDOW & POPUP STYLES (Used for Experience and Contacts) --- */
+        /* --- WINDOW & POPUP STYLES --- */
 
         .window {
             position: absolute;
@@ -110,7 +109,7 @@
             padding: 0 10px;
             cursor: grab;
         }
-        
+
         .window-controls {
             display: flex;
             gap: 8px;
@@ -127,7 +126,14 @@
         .window-close { background-color: #ff5f56; }
         .window-minimize { background-color: #ffbd2e; }
         .window-maximize { background-color: #27c93f; }
-
+        
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
+        
         .window-content {
             flex-grow: 1;
             padding: 20px;
@@ -153,7 +159,7 @@
             border-radius: 12px;
         }
 
-        /* --- WIDGET STYLES (Used for About Me, Tools, Projects) --- */
+        /* --- WIDGET STYLES --- */
         .widget {
             padding: 20px; 
             background: rgba(0, 0, 0, 0.25);
@@ -165,44 +171,7 @@
             font-weight: 500;
             width: var(--widget-width);
         }
-
-        /* Styling for the consolidated About Me widget */
-        .about-widget {
-            padding: 25px; /* Slightly larger padding for prominence */
-        }
-        .about-widget .info-section {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-weight: 400;
-            color: #ccc;
-        }
-        .about-widget .info-section:last-of-type {
-            border-bottom: none;
-        }
         
-        .about-widget .hobbies-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line for hobbies */
-        }
-        .about-widget .hobby-item {
-            text-align: center;
-        }
-        .about-widget .hobby-item img {
-            width: 100%;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s;
-        }
-        .about-widget .hobby-item img:hover {
-            transform: scale(1.05);
-        }
-
         /* General Dock Item Styles */
         .dock-item {
             position: relative;
@@ -279,17 +248,15 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Small screen adjustment */
+        .welcome-modal {
+            display: none;
+        }
+        
+        /* Small screen adjustment for dock icons */
         @media (max-width: 500px) {
             :root {
                 --dock-icon-size: 30px;
                 --widget-width: 90%;
-            }
-            .widget-layout {
-                padding-right: 20px;
-            }
-            .about-widget .hobbies-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -302,7 +269,6 @@
 
         <div class="dock-container">
             <div class="dock">
-                
                 <div class="dock-item" data-window-id="experience-window">
                     <div class="dock-icon">
                         <img class="dock-icon-img" src="https://www.semi.org/sites/semi.org/files/styles/555x419/public/picture/STMicro%2520main.jpg.webp?itok=jjFiMNoU">
@@ -315,41 +281,17 @@
                     </div>
                     <p class="dock-icon-name">Contacts</p>
                 </div>
+                <div class="dock-item" data-window-id="about-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
+                    </div>
+                    <p class="dock-icon-name">About Me</p>
+                </div>
             </div>
         </div>
 
         <div class="widget-layout">
             
-            <div id="about-me-widget" class="widget about-widget">
-                <h1 class="text-2xl font-bold mb-1 text-center">Vincentiu Mocanu</h1>
-                <p class="text-sm font-light text-center mb-4 text-gray-300">Power Electronics Engineer & Software Enthusiast 💡</p>
-                
-                <div class="info-section">
-                    <strong>Technical Focus:</strong>
-                    <p class="mt-1">Power Systems & Validation (ISO 16750)</p>
-                </div>
-                <div class="info-section">
-                    <strong>Primary Code:</strong>
-                    <p class="mt-1">Rust, C, Python, MATLAB/Simulink</p>
-                </div>
-
-                <h2 class="text-xl font-bold mt-4 mb-3 text-center">Hobbies & Passions 🏍️🗺️</h2>
-                <div class="hobbies-grid">
-                    <div class="hobby-item">
-                        <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png">
-                        <p class="text-xs mt-1">Embedded Systems</p>
-                    </div>
-                    <div class="hobby-item">
-                        <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww">
-                        <p class="text-xs mt-1">Motorbiking</p>
-                    </div>
-                    <div class="hobby-item">
-                        <img src="https://images.unsplash.com/photo-1541315610731-9f9f8c6b7531?q=80&w=200&auto=format&fit=crop">
-                        <p class="text-xs mt-1">Travel & Photography</p>
-                    </div>
-                </div>
-            </div>
-
             <div id="tools-widget" class="widget tools-widget">
                 <h1 class="text-xl font-bold mb-4">My Tools 🔧</h1>
                 <div class="grid grid-cols-5 gap-4">
@@ -421,30 +363,27 @@
             </div>
         </div>
         
-        <div id="experience-window" class="window small-centered" style="display: none;">
-            <div class="window-header">
-                <div class="window-controls">
-                    <div class="window-close"></div>
-                    <div class="window-minimize"></div>
-                    <div class="window-maximize"></div>
-                </div>
-                <span class="window-title">Work Experience</span>
-            </div>
+        <div id="hobbies-window" class="window small-centered" style="display: flex;">
             <div class="window-content">
+                <div class="flex flex-col items-center text-white">
+                    <h2 class="text-xl font-bold mb-4">What I do for fun</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                         <div class="flex flex-col items-center text-center">
+                            <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
+                            <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-24 object-cover rounded-md shadow-lg">
+                        </div>
+                        <div class="flex flex-col items-center text-center">
+                            <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
+                            <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-24 object-cover rounded-md shadow-lg">
+                        </div>
+                    </div>
+                    <h3 class="font-semibold text-sm mb-2 text-center mt-3">Travel Memories</h3>
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+                        <img src="https://images.unsplash.com/photo-1541315610731-9f9f8c6b7531?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1594956328906-8d626353d2d2?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
+                    </div>
                 </div>
-        </div>
-
-        <div id="contact-window" class="window small-centered" style="display: none;">
-            <div class="window-header">
-                <div class="window-controls">
-                    <div class="window-close"></div>
-                    <div class="window-minimize"></div>
-                    <div class="window-maximize"></div>
-                </div>
-                <span class="window-title">Contacts</span>
             </div>
-            <div class="window-content">
-                </div>
         </div>
 
     </div>
@@ -456,42 +395,9 @@
                 title: 'Work Experience',
                 className: 'small-centered', 
                 content: `
-                    <style>
-                        /* Add local styling for the photo gallery to the Experience Window */
-                        .photo-gallery {
-                            display: flex;
-                            flex-direction: column;
-                            gap: 15px;
-                        }
-                        .photo-item {
-                            display: flex;
-                            align-items: flex-start;
-                            padding: 10px;
-                            background: #fff;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                        }
-                        .photo-item img {
-                            width: 60px;
-                            height: 60px;
-                            object-fit: contain;
-                            border-radius: 4px;
-                            margin-right: 15px;
-                            flex-shrink: 0;
-                        }
-                        .photo-caption {
-                            color: #333;
-                        }
-                        .photo-caption p {
-                            line-height: 1.3;
-                        }
-                        .text-black-1000 {
-                            color: #1a1a1a;
-                        }
-                    </style>
-                    <h1 class="text-2xl font-bold p-5 text-gray-800">Work Experience</h1>
+                    <h1 class="text-2xl font-bold p-5">Work Experience</h1>
     
-                    <div class="photo-gallery px-5 pb-5">
+                    <div class="photo-gallery">
                         <div class="photo-item" >
                             <img src="https://i.ytimg.com/vi/dAegKZf0Ou8/maxresdefault.jpg">
                             <div class="photo-caption">
@@ -532,15 +438,15 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://maps.google.com/maps?q=Barcelona&z=10&output=embed"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.828859345262!2d2.1524314!3d41.3850638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4m0!3e0!5m2!1sen!2ses"
                                     class="map-frame"
                                     allowfullscreen=""
                                     loading="lazy"
                         ></iframe>
                         <div class="p-4 bg-white/90">
                             
-                            <h2 class="text-xl font-semibold text-gray-800">Contact Information</h2>
-                            <p class="text-sm mt-2 text-gray-700">Feel free to reach out to me via email or connect with me on social media.</p>
+                            <h2 class="text-xl font-semibold">Contact Information</h2>
+                            <p class="text-sm mt-2">Feel free to reach out to me via email or connect with me on social media.</p>
                             <ul class="list-disc list-inside mt-2 text-sm">
                                 <div class="contact-icons flex justify-center items-center gap-6 mt-4">
                                     <a href="mailto:vincentiu.mocanu00@gmail.com" target="_blank">
@@ -557,8 +463,31 @@
                         </div>
                     </div>
                 `,
+            },
+            {
+                id: 'about-window',
+                title: 'More About Me',
+                content: `
+                    <div class="p-5 flex flex-col items-center text-center">
+                        <h1 class="text-3xl font-bold mb-4 text-gray-700">Vincentiu Mocanu</h1>
+                        <p class="text-lg mb-6 text-gray-600">Power Electronics Engineer & Software Enthusiast 💡</p>
+
+                        <div class="text-left max-w-lg">
+                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Technical Focus:</h2>
+                            <ul class="list-disc list-inside mb-4 text-gray-600">
+                                <li><strong>Power Electronics:</strong> Design, Modeling (Matlab/Simulink/PLECS), and Validation (ISO 16750) of automotive converters.</li>
+                                <li><strong>Embedded Systems:</strong> Experience with C and Rust for firmware development.</li>
+                                <li><strong>Software Development:</strong> Building tools and simulations using Python (Streamlit) and JavaScript.</li>
+                            </ul>
+                            
+                            <h2 class="text-xl font-semibold mb-2 text-gray-700">Hobbies & Passions:</h2>
+                            <p class="text-gray-600">
+                                When not engineering, I'm often on an adventure! I love to travel, especially exploring new places on my motorbike or delving into a good book. I'm endlessly curious and always looking for new things to learn, both in power electronics and software development.
+                            </p>
+                        </div>
+                    </div>
+                `,
             }
-            /* The 'about-window' is removed from windowsData since its content is now in the static widget */
         ];
 
         const desktop = document.querySelector('.desktop');
@@ -570,27 +499,30 @@
             const existingEl = document.getElementById(data.id);
             if (existingEl) return existingEl;
 
-            const windowEl = document.getElementById(data.id); // Find the pre-existing element in HTML
+            const windowEl = document.createElement('div');
+            windowEl.id = data.id;
+            windowEl.classList.add('window', 'absolute'); 
             
-            // Check if the pre-existing element was found before trying to append content
-            if(windowEl) {
-                // Pre-existing window (Experience or Contact), just inject content
-                const header = windowEl.querySelector('.window-header');
-                const contentArea = windowEl.querySelector('.window-content');
-                
-                // Inject the content
-                if (contentArea) contentArea.innerHTML = data.content;
-                
-                // Set the title
-                const titleSpan = windowEl.querySelector('.window-title');
-                if (titleSpan) titleSpan.textContent = data.title;
-                
-                return windowEl;
+            if (data.className) {
+                windowEl.classList.add(data.className);
             }
+
+            let headerHtml = `
+                <div class="window-header">
+                    <div class="window-controls">
+                        <div class="window-close"></div>
+                        <div class="window-minimize"></div>
+                        <div class="window-maximize"></div>
+                    </div>
+                    <span class="window-title">${data.title}</span>
+                </div>
+            `;
             
-            // If the element wasn't pre-existing, something is wrong, but for this setup 
-            // we rely on the HTML structure for Experience and Contact.
-            return null;
+            windowEl.innerHTML = headerHtml + `<div class="window-content">${data.content}</div>`;
+            
+            desktop.appendChild(windowEl);
+            
+            return windowEl;
         }
 
         function openWindow(id) {
@@ -683,10 +615,6 @@
         }
 
         function initializeWindows() {
-            // Inject content into the pre-existing HTML window structures (Experience and Contact)
-            windowsData.forEach(data => {
-                createWindowEvent(data);
-            });
 
             // Set up all window controls
             document.querySelectorAll('.window').forEach(windowEl => {
@@ -718,12 +646,10 @@
                 const windowId = item.getAttribute('data-window-id');
                 item.onclick = () => {
                     const windowEl = document.getElementById(windowId);
-                    
-                    // Toggle visibility of the target window/pop-up
                     if (windowEl && windowEl.style.display === 'flex') {
                         closeWindow(windowId);
                     } else {
-                        // Close any other regular windows before opening a new one
+                        // Close only regular windows before opening a new one
                         document.querySelectorAll('.window').forEach(win => {
                             if (win.id !== windowId) closeWindow(win.id);
                         });
@@ -735,7 +661,7 @@
             // Clock setup
             updateClock();
             setInterval(updateClock, 1000);
-            
+
         });
 
     </script>

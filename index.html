@@ -38,7 +38,7 @@
         }
 
         /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
-        @media (max-width: 500px){
+        @media (max-width: 800px){
             :root {
                 --dock-icon-size: 30px; /* Slightly smaller icons */
                 --widget-width: 90%; /* Wider widgets for tablet */
@@ -738,7 +738,7 @@
             initializeWindows();
             initializeWidgets();
             updateClock();
-             setInterval(updateClock, 1000);
+            setInterval(updateClock, 1000);
             
             // NOTE: The welcome modal is hidden by CSS now, so no need to explicitly close it here.
         });

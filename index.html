@@ -10,11 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Define a base window size for tablet/desktop */
             --window-width: 60%;
             --window-height: 80%;
             --dock-icon-size: 50px;
-            --widget-width: 400px; /* Increased widget width for more space */
         }
 
         body {
@@ -37,14 +35,14 @@
             background-position: center;
         }
 
-        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL (Kept the same) --- */
+        /* --- DOCK STYLES: RIGHT SIDE, VERTICAL --- */
         .dock-container {
             position: absolute;
-            top: 50%; /* Center vertically */
+            top: 50%;
             bottom: auto;
-            right: 20px; /* Fixed distance from the right edge */
+            right: 20px;
             left: auto;
-            transform: translateY(-50%); /* Adjust for vertical centering */
+            transform: translateY(-50%);
             z-index: 1000;
         }
 
@@ -61,26 +59,7 @@
             align-items: center;
         }
         
-        /* Widget Layout (Kept the same) */
-        .widget-layout {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            padding: 20px;
-            max-width: calc(100vw - 120px);
-            max-height: 90vh;
-            overflow-y: auto;
-            padding-right: 100px;
-        }
-
         /* --- WINDOW & POPUP STYLES --- */
-
         .window {
             position: absolute;
             width: var(--window-width);
@@ -93,13 +72,21 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            display: none;
+            display: none; /* All windows start hidden */
             flex-direction: column;
             z-index: 10;
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%);
         }
+        
+        /* Center small windows more compactly */
+        .window.small-centered {
+            width: 400px;
+            height: auto;
+            min-height: 300px;
+        }
+
 
         .window-header {
             height: 30px;
@@ -159,19 +146,6 @@
             border-radius: 12px;
         }
 
-        /* --- WIDGET STYLES --- */
-        .widget {
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(20px);
-            border-radius: 18px; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            color: #ffffff;
-            font-weight: 500;
-            width: var(--widget-width);
-        }
-        
         /* General Dock Item Styles */
         .dock-item {
             position: relative;
@@ -227,36 +201,10 @@
             text-align: center;
         }
 
-        /* Tool and Project Specific Layouts */
-        .tools-widget .grid-cols-5 {
-             grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-        .projects-widget .project-grid {
-             grid-template-columns: repeat(2, minmax(0, 1fr));
-             gap: 15px;
-        }
-        
-        .project-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-        
-        .project-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .welcome-modal {
-            display: none;
-        }
-        
-        /* Small screen adjustment for dock icons */
+        /* Small screen adjustment */
         @media (max-width: 500px) {
             :root {
                 --dock-icon-size: 30px;
-                --widget-width: 90%;
             }
         }
     </style>
@@ -275,11 +223,11 @@
                     </div>
                     <p class="dock-icon-name">Experience</p>
                 </div>
-                <div class="dock-item" data-window-id="contact-window">
+                <div class="dock-item" data-window-id="tools-window">
                     <div class="dock-icon">
-                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Caliper_icon.png">
                     </div>
-                    <p class="dock-icon-name">Contacts</p>
+                    <p class="dock-icon-name">Tools</p>
                 </div>
                 <div class="dock-item" data-window-id="about-window">
                     <div class="dock-icon">
@@ -287,103 +235,78 @@
                     </div>
                     <p class="dock-icon-name">About Me</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="widget-layout">
-            
-            <div id="tools-widget" class="widget tools-widget">
-                <h1 class="text-xl font-bold mb-4">My Tools 🔧</h1>
-                <div class="grid grid-cols-5 gap-4">
-                    <div class="flex flex-col items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Rust</p>
+                <div class="dock-item" data-window-id="contact-window">
+                    <div class="dock-icon">
+                        <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mail_%28iOS%29.svg/2048px-Mail_%28iOS%29.svg.png">
                     </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">C</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Python</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">JS</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Matlab</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Simulink</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">SimScape</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">PLECS</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Docker</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://orbstack.dev/img/icon256.png" class="w-10 h-10 object-contain rounded-md">
-                        <p class="text-xs text-center mt-1">Orbstack</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="projects-widget" class="widget projects-widget">
-                <h1 class="text-xl font-bold mb-4">Projects 🚀</h1>
-                <div class="project-grid grid gap-4">
-                    <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                        <div class="project-item flex items-center p-3 rounded-xl hover:bg-white/10 transition-colors">
-                            <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
-                            <p class="text-sm text-white font-semibold">Powertrain Simulation Tool</p>
-                        </div>
-                    </a>
-                    <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                        <div class="project-item flex items-center p-3 rounded-xl hover:bg-white/10 transition-colors">
-                            <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
-                            <p class="text-sm text-white font-semibold">Validation Tracker App</p>
-                        </div>
-                    </a>
-                    <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
-                        <div class="project-item flex items-center p-3 rounded-xl hover:bg-white/10 transition-colors">
-                            <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mr-3">
-                            <p class="text-sm text-white font-semibold">GameBoy Emulator in Rust</p>
-                        </div>
-                    </a>
+                    <p class="dock-icon-name">Contacts</p>
                 </div>
             </div>
         </div>
         
-        <div id="hobbies-window" class="window small-centered" style="display: flex;">
-            <div class="window-content">
-                <div class="flex flex-col items-center text-white">
-                    <h2 class="text-xl font-bold mb-4">What I do for fun</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                         <div class="flex flex-col items-center text-center">
-                            <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
-                            <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-24 object-cover rounded-md shadow-lg">
-                        </div>
-                        <div class="flex flex-col items-center text-center">
-                            <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
-                            <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-24 object-cover rounded-md shadow-lg">
-                        </div>
-                    </div>
-                    <h3 class="font-semibold text-sm mb-2 text-center mt-3">Travel Memories</h3>
-                    <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
-                        <img src="https://images.unsplash.com/photo-1541315610731-9f9f8c6b7531?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
-                        <img src="https://images.unsplash.com/photo-1594956328906-8d626353d2d2?q=80&w=200&auto=format&fit=crop" class="w-full h-20 object-cover rounded-md shadow-lg">
-                    </div>
+        <div id="experience-window" class="window small-centered">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
                 </div>
+                <span class="window-title">Work Experience</span>
             </div>
+            <div class="window-content">
+                </div>
+        </div>
+
+        <div id="contact-window" class="window small-centered">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
+                </div>
+                <span class="window-title">Contacts</span>
+            </div>
+            <div class="window-content">
+                </div>
+        </div>
+        
+        <div id="tools-window" class="window small-centered">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
+                </div>
+                <span class="window-title">My Tools</span>
+            </div>
+            <div class="window-content">
+                </div>
+        </div>
+        
+        <div id="about-window" class="window">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
+                </div>
+                <span class="window-title">More About Me</span>
+            </div>
+            <div class="window-content">
+                </div>
+        </div>
+
+        <div id="projects-window" class="window small-centered">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-close"></div>
+                    <div class="window-minimize"></div>
+                    <div class="window-maximize"></div>
+                </div>
+                <span class="window-title">Projects</span>
+            </div>
+            <div class="window-content">
+                </div>
         </div>
 
     </div>
@@ -395,9 +318,42 @@
                 title: 'Work Experience',
                 className: 'small-centered', 
                 content: `
-                    <h1 class="text-2xl font-bold p-5">Work Experience</h1>
+                    <style>
+                        /* Local styling for the experience window's content */
+                        .photo-gallery {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 15px;
+                        }
+                        .photo-item {
+                            display: flex;
+                            align-items: flex-start;
+                            padding: 10px;
+                            background: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        }
+                        .photo-item img {
+                            width: 60px;
+                            height: 60px;
+                            object-fit: contain;
+                            border-radius: 4px;
+                            margin-right: 15px;
+                            flex-shrink: 0;
+                        }
+                        .photo-caption {
+                            color: #333;
+                        }
+                        .photo-caption p {
+                            line-height: 1.3;
+                        }
+                        .text-black-1000 {
+                            color: #1a1a1a;
+                        }
+                    </style>
+                    <h1 class="text-2xl font-bold p-5 text-gray-800">Work Experience</h1>
     
-                    <div class="photo-gallery">
+                    <div class="photo-gallery px-5 pb-5">
                         <div class="photo-item" >
                             <img src="https://i.ytimg.com/vi/dAegKZf0Ou8/maxresdefault.jpg">
                             <div class="photo-caption">
@@ -468,22 +424,140 @@
                 id: 'about-window',
                 title: 'More About Me',
                 content: `
-                    <div class="p-5 flex flex-col items-center text-center">
-                        <h1 class="text-3xl font-bold mb-4 text-gray-700">Vincentiu Mocanu</h1>
+                    <div class="p-5 flex flex-col items-center text-center text-gray-700">
+                        <h1 class="text-3xl font-bold mb-4">Vincentiu Mocanu</h1>
                         <p class="text-lg mb-6 text-gray-600">Power Electronics Engineer & Software Enthusiast 💡</p>
 
-                        <div class="text-left max-w-lg">
+                        <div class="text-left max-w-lg w-full">
                             <h2 class="text-xl font-semibold mb-2 text-gray-700">Technical Focus:</h2>
-                            <ul class="list-disc list-inside mb-4 text-gray-600">
+                            <ul class="list-disc list-inside mb-6 text-gray-600 pl-4">
                                 <li><strong>Power Electronics:</strong> Design, Modeling (Matlab/Simulink/PLECS), and Validation (ISO 16750) of automotive converters.</li>
                                 <li><strong>Embedded Systems:</strong> Experience with C and Rust for firmware development.</li>
                                 <li><strong>Software Development:</strong> Building tools and simulations using Python (Streamlit) and JavaScript.</li>
                             </ul>
                             
                             <h2 class="text-xl font-semibold mb-2 text-gray-700">Hobbies & Passions:</h2>
-                            <p class="text-gray-600">
-                                When not engineering, I'm often on an adventure! I love to travel, especially exploring new places on my motorbike or delving into a good book. I'm endlessly curious and always looking for new things to learn, both in power electronics and software development.
+                            <p class="text-gray-600 mb-6">
+                                When not engineering, I'm often on an adventure! I love to travel, especially exploring new places on my motorbike or delving into a good book. I'm endlessly curious and always looking for new things to learn.
                             </p>
+                            
+                            <h3 class="text-lg font-semibold mb-2 text-gray-700">Featured Hobbies 🏍️🗺️</h3>
+                            <div class="grid grid-cols-3 gap-4 w-full text-sm">
+                                <div class="flex flex-col items-center text-center">
+                                    <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-lg">
+                                    <p class="mt-1">Embedded Systems</p>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-lg">
+                                    <p class="mt-1">Motorbiking</p>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <img src="https://images.unsplash.com/photo-1541315610731-9f9f8c6b7531?q=80&w=200&auto=format&fit=crop" class="w-full h-16 object-cover rounded-md shadow-lg">
+                                    <p class="mt-1">Travel</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+            },
+            {
+                id: 'tools-window',
+                title: 'My Tools',
+                className: 'small-centered', 
+                content: `
+                    <div class="p-5">
+                        <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Development Tools 🔧</h1>
+                        <div class="grid grid-cols-5 gap-6">
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Rust</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">C</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Python</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">JS</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Matlab</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Simulink</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">SimScape</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">PLECS</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Docker</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <img src="https://orbstack.dev/img/icon256.png" class="w-10 h-10 object-contain rounded-md">
+                                <p class="text-xs text-center mt-1 text-gray-700">Orbstack</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+            },
+            {
+                id: 'projects-window',
+                title: 'Projects',
+                className: 'small-centered', 
+                content: `
+                    <style>
+                        /* Local styling for the project window's content */
+                        .project-grid {
+                             display: grid;
+                             grid-template-columns: repeat(2, minmax(0, 1fr));
+                             gap: 15px;
+                        }
+                        .project-item {
+                            background-color: rgba(0, 0, 0, 0.05); /* Lighter background in white window */
+                            padding: 15px;
+                            border-radius: 10px;
+                            transition: background-color 0.2s;
+                            cursor: pointer;
+                            color: #333;
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                        }
+                        .project-item:hover {
+                            background-color: rgba(0, 0, 0, 0.1);
+                        }
+                    </style>
+                    <div class="p-5">
+                        <h1 class="text-2xl font-bold mb-4 text-gray-800 text-center">Projects 🚀</h1>
+                        <div class="project-grid">
+                            <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex items-center rounded-xl transition-colors">
+                                    <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
+                                    <p class="text-sm font-semibold">Powertrain Simulation Tool</p>
+                                </div>
+                            </a>
+                            <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex items-center rounded-xl transition-colors">
+                                    <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mr-3">
+                                    <p class="text-sm font-semibold">Validation Tracker App</p>
+                                </div>
+                            </a>
+                            <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
+                                <div class="project-item flex items-center rounded-xl transition-colors">
+                                    <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mr-3">
+                                    <p class="text-sm font-semibold">GameBoy Emulator in Rust</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 `,
@@ -496,33 +570,22 @@
         let zIndexCounter = 10;
         
         function createWindowEvent(data) {
-            const existingEl = document.getElementById(data.id);
-            if (existingEl) return existingEl;
-
-            const windowEl = document.createElement('div');
-            windowEl.id = data.id;
-            windowEl.classList.add('window', 'absolute'); 
+            const windowEl = document.getElementById(data.id); 
             
-            if (data.className) {
-                windowEl.classList.add(data.className);
+            if(windowEl) {
+                // Set initial class and inject content/title into the pre-existing HTML shell
+                if (data.className) {
+                    windowEl.classList.add(data.className);
+                }
+                const contentArea = windowEl.querySelector('.window-content');
+                const titleSpan = windowEl.querySelector('.window-title');
+                
+                if (contentArea) contentArea.innerHTML = data.content;
+                if (titleSpan) titleSpan.textContent = data.title;
+                
+                return windowEl;
             }
-
-            let headerHtml = `
-                <div class="window-header">
-                    <div class="window-controls">
-                        <div class="window-close"></div>
-                        <div class="window-minimize"></div>
-                        <div class="window-maximize"></div>
-                    </div>
-                    <span class="window-title">${data.title}</span>
-                </div>
-            `;
-            
-            windowEl.innerHTML = headerHtml + `<div class="window-content">${data.content}</div>`;
-            
-            desktop.appendChild(windowEl);
-            
-            return windowEl;
+            return null;
         }
 
         function openWindow(id) {
@@ -615,7 +678,10 @@
         }
 
         function initializeWindows() {
-
+            // Inject content into all pre-existing HTML window structures
+            windowsData.forEach(data => {
+                createWindowEvent(data);
+            });
 
             // Set up all window controls
             document.querySelectorAll('.window').forEach(windowEl => {
@@ -647,10 +713,12 @@
                 const windowId = item.getAttribute('data-window-id');
                 item.onclick = () => {
                     const windowEl = document.getElementById(windowId);
+                    
+                    // Toggle visibility of the target window/pop-up
                     if (windowEl && windowEl.style.display === 'flex') {
                         closeWindow(windowId);
                     } else {
-                        // Close only regular windows before opening a new one
+                        // Close any other open windows before opening a new one
                         document.querySelectorAll('.window').forEach(win => {
                             if (win.id !== windowId) closeWindow(win.id);
                         });
@@ -662,7 +730,9 @@
             // Clock setup
             updateClock();
             setInterval(updateClock, 1000);
-
+            
+            // Auto-open About Me on load for immediate context
+            openWindow('about-window');
         });
 
     </script>

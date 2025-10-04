@@ -15,6 +15,7 @@
             --window-height: 80%;
             --dock-icon-size: 50px;
             --widget-width: 280px;
+            --menubar-height: 50px; /* New variable for top dock height */
         }
 
         body {
@@ -46,45 +47,35 @@
                 --window-height: 95%;
             }
 
-            /* Main Dock at the bottom, wider */
+            /* Main Dock at the top, full width */
             .dock-container {
                 position: absolute;
-                bottom: 20px; /* Elevated from the bottom */
-                left: 50%;
-                transform: translateX(-50%);
+                top: 0; 
+                bottom: auto; /* Remove bottom positioning */
+                left: 0;
+                transform: translateX(0); /* Remove centering transform */
+                width: 100%; /* Full width at the top */
+                max-width: none;
+                border-radius: 0; /* Straight edges for menubar look */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Stronger shadow on top */
             }
             
             .dock {
-                padding: 8px 15px;
-                gap: 10px; /* Reduced gap */
+                padding: 5px 15px; /* Smaller padding for a menu bar */
+                gap: 15px;
+                justify-content: flex-start; /* Align to the left */
+                border-radius: 0;
+                border: none;
+                background: rgba(43, 43, 43, 0.4); /* Slightly darker for better contrast */
             }
 
-            /* Reposition widgets for a more centralized layout */
-            .widget {
-                position: static; /* Remove absolute positioning */
-                margin: 10px auto;
-                width: var(--widget-width);
-            }
-
-            .widget-feed { order: 2; }
-            .widget-photo-memory { order: 1; }
-            .projects-widget { display: none !important; } /* Combine with Photo/Tool widget */
-
-            /* Center window on the screen for better tablet experience */
-            .window {
-                width: var(--window-width) !important;
-                height: var(--window-height) !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-            }
-
+            /* Widget Layout adjusted for top dock */
             .widget-layout {
                 position: absolute;
-                top: 60px;
+                top: var(--menubar-height); /* Start below the new top dock */
                 left: 0;
                 right: 0;
-                bottom: 100px; /* Space for the dock */
+                bottom: 0; /* Use full remaining height */
                 padding: 10px;
                 display: flex;
                 flex-direction: column;
@@ -92,44 +83,55 @@
                 gap: 15px;
                 overflow-y: auto;
             }
+            
+            /* Center window on the screen for better tablet experience */
+            .window {
+                /* Existing tablet centering remains here, but we target 'small-centered' specifically */
+            }
         }
         
         /* General Styles */
         
         .dock-container {
             position: absolute;
-            bottom: 30px; 
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0; /* Moved to top */
+            left: 0;
+            right: 0; /* Full width */
+            transform: none; /* Removed centering transform */
             z-index: 1000;
+            width: 100%;
         }
 
         .dock {
-            padding: 8px 15px;
-            background: rgba(43, 43, 43, 0.25);
+            padding: 5px 15px; /* Menu bar padding */
+            background: rgba(43, 43, 43, 0.4);
             backdrop-filter: blur(20px);
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0; /* Menu bar style */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
+            border-top: none;
             display: flex;
             gap: 15px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            justify-content: flex-start; /* Align items to the left */
         }
 
         .dock-item {
             position: relative;
             display: flex;
-            flex-direction: column;
+            /* Changed to row layout for a horizontal menu bar feel */
+            flex-direction: row; 
             align-items: center;
             gap: 5px;
+            padding: 5px 0; /* Add some vertical padding */
         }
 
         .dock-icon {
             position: relative;
-            width: var(--dock-icon-size);
-            height: var(--dock-icon-size);
-            background-color: #555;
-            border-radius: 12px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
+            width: 30px; /* Smaller icon size for menu bar */
+            height: 30px;
+            background-color: transparent; /* Transparent background */
+            border-radius: 6px;
+            transition: background-color 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -137,32 +139,49 @@
         }
 
         .dock-icon:hover {
-            transform: translateY(-8px) scale(1.1);
-            background-color: #666;
+            transform: none; /* Removed bounce effect */
+            background-color: rgba(255, 255, 255, 0.1); /* Highlight on hover */
         }
         
         .dock-icon-img {
             width: 70%;
             height: 70%;
-            border-radius: 8px;
+            border-radius: 4px;
             object-fit: cover;
         }
 
         .dock-icon-name {
             color: white;
-            font-size: 10px;
+            font-size: 14px; /* Larger font for menu bar text */
+            font-weight: 400;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            text-align: center;
+            text-align: left;
+            margin-right: 10px; /* Space between text and next icon */
+        }
+
+        .dock-item-active .dock-icon-name {
+            font-weight: 600; /* Bold active item */
         }
 
         .dock-item-active::after {
-            content: '';
+            /* Removed the dot indicator as it doesn't fit the menu bar style */
+            content: none;
+        }
+
+        /* Widget Layout adjusted for top dock */
+        .widget-layout {
             position: absolute;
-            bottom: -5px;
-            width: 4px;
-            height: 4px;
-            background-color: white;
-            border-radius: 50%;
+            top: var(--menubar-height); /* Starts right below the top dock */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: row; /* Default back to row for desktop */
+            flex-wrap: wrap; /* Allow wrapping */
+            align-items: flex-start; /* Start widgets from the top */
+            gap: 20px;
+            overflow-y: auto;
         }
 
         .window {
@@ -180,6 +199,17 @@
             display: none;
             flex-direction: column;
             z-index: 10;
+        }
+
+        /* Specific style for the small, centered window (Experience) */
+        .window.small-centered {
+            width: 800px;
+            height: 550px;
+            max-width: 95vw;
+            max-height: 95vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .window-header {
@@ -224,13 +254,13 @@
 
         .clock {
             position: absolute;
-            top: 15px;
+            top: 15px; /* Adjusted to be next to the menu bar */
             right: 15px;
             color: rgb(255, 255, 255);
             font-size: 14px;
             font-weight: 500;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            z-index: 1001; /* Must be above the dock */
         }
 
         .map-frame {
@@ -250,22 +280,17 @@
             color: #ffffff;
             font-weight: 500;
             width: var(--widget-width);
+            /* Widgets should be draggable only by their header/title now */
         }
         
-        /* Remove original absolute positioning for a flexible layout */
-        .widget-feed, .widget-photo-memory {
-             position: relative; 
-             margin-bottom: 20px;
+        /* Tool and Project Specific Layouts for better widget flow */
+        .tools-widget .grid-cols-5 {
+             grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        .projects-widget .project-grid {
+             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
         
-        /* Projects and Tools Widget */
-        .projects-tools-widget {
-            display: flex;
-            flex-direction: column;
-            cursor: grab;
-            width: var(--widget-width);
-        }
-
         .project-item {
             background-color: rgba(255, 255, 255, 0.1);
             padding: 10px;
@@ -280,9 +305,9 @@
 
         .photo-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            padding: 20px;
+            padding: 0 20px 20px 20px; /* Adjusted padding */
         }
 
         .photo-item {
@@ -370,10 +395,10 @@
         /* New CSS for notification dot */
         .notification-dot {
             position: absolute;
-            top: -2px;
+            top: 8px; /* Adjusted position for smaller icon in menu bar */
             right: -2px;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background-color: #ff3b30;
             border-radius: 50%;
             border: 1px solid white;
@@ -399,103 +424,6 @@
 <body>
 
     <div class="desktop">
-        <div id="clock" class="clock"></div>
-        
-        <div class="widget-layout">
-             <div id="projects-tools-widget" class="widget projects-tools-widget">
-                <div class="flex flex-col md:flex-row gap-5">
-                     <div class="flex-1">
-                        <h1 class="text-lg font-bold mb-3">My Tools 🔧</h1>
-                        <div class="grid grid-cols-5 gap-3">
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Rust</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">C</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Python</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">JS</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Matlab</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Simulink</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">SimScape</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">PLECS</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Docker</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <img src="https://orbstack.dev/img/icon256.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
-                                <p class="text-xs text-center mt-1">Orbstack</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-1 mt-4 md:mt-0">
-                        <h1 class="text-lg font-bold mb-3">Projects 🚀</h1>
-                        <div class="project-grid grid grid-cols-3 gap-4">
-                            <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
-                                    <p class="text-xs text-center text-white">Powertrain Sim</p>
-                                </div>
-                            </a>
-                            <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
-                                    <p class="text-xs text-center text-white">Validation Tracker</p>
-                                </div>
-                            </a>
-                            <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
-                                <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mb-1">
-                                    <p class="text-xs text-center text-white">GameBoy Sim</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="widget widget-feed text-white-800">
-                <h2 class="text-lg font-bold mb-3">Hobbies & Memories 🏍️🗺️</h2>
-                <div class="grid grid-cols-2 gap-2 mb-3">
-                     <div class="flex flex-col items-center">
-                        <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
-                        <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
-                        <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
-                    </div>
-                </div>
-                <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
-                    <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
-                </div>
-            </div>
-        </div>
-        
         <div class="dock-container">
             <div class="dock">
                 <div class="dock-item" data-window-id="experience-window">
@@ -516,6 +444,100 @@
                         <img class="dock-icon-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Finder_Icon_macOS_Big_Sur.png/500px-Finder_Icon_macOS_Big_Sur.png">
                     </div>
                     <p class="dock-icon-name">About Me</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="clock" class="clock"></div>
+        
+        <div class="widget-layout">
+            
+            <div id="tools-widget" class="widget tools-widget">
+                <h1 class="text-lg font-bold mb-3">My Tools 🔧</h1>
+                <div class="grid grid-cols-5 gap-3">
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Rust_programming_language_black_logo.svg/2000px-Rust_programming_language_black_logo.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Rust</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">C</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Python</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1024px-Unofficial_JavaScript_logo_2.svg.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">JS</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjB_NjyF7A35KjCKejyj7qjTw7r_c-07McGg&s" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Matlab</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Simulink_Logo_%28non-wordmark%29.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Simulink</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://www.mathworks.com/products/simscape/_jcr_content/mainParsys/band_copy_copy_copy/mainParsys/columns/17d54180-2bc7-4dea-9001-ed61d4459cda/thumbnail.adapt.full.medium.jpg/1756239428756.jpg" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">SimScape</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://europe1.discourse-cdn.com/flex006/uploads/plecs/original/1X/916c49fe9f879d1d8dbeb114d77b4ab7d18bbe04.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">PLECS</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://les-enovateurs.com/_next/image?url=https%3A%2F%2Fstatic.les-enovateurs.com%2Fuploads%2F2016%2F11%2Flarge_v-dark.png&w=3840&q=75" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Docker</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://orbstack.dev/img/icon256.png" class="w-8 h-8 md:w-10 md:h-10 object-contain rounded-md">
+                        <p class="text-xs text-center mt-1">Orbstack</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="projects-widget" class="widget projects-widget">
+                <h1 class="text-lg font-bold mb-3">Projects 🚀</h1>
+                <div class="project-grid grid grid-cols-3 gap-4">
+                    <a href="https://itsvinm-powertrain-case-selection-powertrain-sim-1k95tr.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                            <img src="https://di-uploads-pod16.dealerinspire.com/toyotaofnorthcharlotte/uploads/2022/12/vehicle-powertrain.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
+                            <p class="text-xs text-center text-white">Powertrain Sim</p>
+                        </div>
+                    </a>
+                    <a href="https://itsvinm-tracker-tracker-bhweqt.streamlit.app/" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                            <img src="https://img.freepik.com/free-photo/green-check-mark-symbol-icon-sign-correct-right-approve-concept-confirm-illustration-isolated-green-background-3d-rendering_56104-1220.jpg" class="w-12 h-12 object-contain rounded-md mb-1">
+                            <p class="text-xs text-center text-white">Validation Tracker</p>
+                        </div>
+                    </a>
+                    <a href="https://github.com/itsVinM/GameBoy" target="_blank" rel="noopener noreferrer">
+                        <div class="project-item flex flex-col items-center p-2 rounded-lg hover:bg-white/10 transition-colors">
+                            <img src="https://fms.komkon.org/VGB/snaps/PokemonSilver.png" class="w-12 h-12 object-contain rounded-md mb-1">
+                            <p class="text-xs text-center text-white">GameBoy Sim</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="widget widget-feed text-white-800">
+                <h2 class="text-lg font-bold mb-3">Hobbies & Memories 🏍️🗺️</h2>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                     <div class="flex flex-col items-center">
+                        <h3 class="font-semibold text-sm mb-2">Embedded Systems</h3>
+                        <img src="https://blog.nashtechglobal.com/wp-content/uploads/2023/06/Embedded-testing-challenge-and-solution-01.png" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="font-semibold text-sm mb-2">Motorbiking</h3>
+                        <img src="https://images.unsplash.com/photo-1606907568152-58fcb0a0a4e5?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bW90b3JiaWllfGVufDB8fDB8fHww" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    </div>
+                </div>
+                <h3 class="font-semibold text-sm mb-2">Travel Memories</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <img src="static/Istanbul.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
+                    <img src="static/Kapadokia.jpg" class="w-full h-16 object-cover rounded-md shadow-sm">
                 </div>
             </div>
         </div>
@@ -541,6 +563,8 @@
             {
                 id: 'experience-window',
                 title: 'Work Experience',
+                // Added a class to data for custom sizing/positioning
+                className: 'small-centered', 
                 content: `
                     <h1 class="text-2xl font-bold p-5">Work Experience</h1>
     
@@ -585,7 +609,7 @@
                 title: 'Contacts',
                 content: `
                     <div class="p-0 flex flex-col h-full">
-                        <iframe src="https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3164.7175891795367!2d2.154944883460678!3d41.38506399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a498167660c1d1%3A0x6b1c4b1d1f0e4b1c!2sBarcelona%2C%20Spain!5e0!3m2!1sen!2ses!4v1717618991234!5m2!1sen!2ses"
                                     class="map-frame"
                                     allowfullscreen=""
                                     loading="lazy"
@@ -645,8 +669,18 @@
         function createWindowEvent(data) {
             const windowEl = document.createElement('div');
             windowEl.id = data.id;
-            // Removed transform classes for more predictable positioning on iPad
-            windowEl.classList.add('window', 'absolute', 'top-1/2', 'left-1/2'); 
+            // Added default position classes
+            windowEl.classList.add('window', 'absolute'); 
+            
+            // Add custom class if defined (e.g., 'small-centered' for Experience)
+            if (data.className) {
+                windowEl.classList.add(data.className);
+            } else {
+                 // Default centering for other windows
+                windowEl.style.top = '50%';
+                windowEl.style.left = '50%';
+                windowEl.style.transform = 'translate(-50%, -50%)';
+            }
 
             let headerHtml = `
                 <div class="window-header">
@@ -665,9 +699,6 @@
             
             desktop.appendChild(windowEl);
             
-            if (data.motorScript) {
-                initAdvancedMotorSimulation();
-            }
             return windowEl;
         }
 
@@ -706,12 +737,9 @@
             let offsetX, offsetY;
             const windowEl = header.closest('.window') || header.closest('.widget');
 
-            // Prevent dragging on small screens for a more native touch experience,
-            // or simplify dragging implementation for touch devices.
+            // Disable dragging for windows on small/touch devices for better usability
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
             if (isTouchDevice && windowEl.classList.contains('window')) {
-                // For windows, we keep the close functionality but disable dragging to 
-                // enforce the centered/maximized window look on smaller screens.
                 return; 
             }
             
@@ -724,6 +752,11 @@
                 
                 zIndexCounter++;
                 windowEl.style.zIndex = zIndexCounter;
+                
+                // Clear the centering transform to allow dragging to take over
+                if (windowEl.classList.contains('small-centered')) {
+                    windowEl.style.transform = 'none';
+                }
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -741,7 +774,6 @@
 
         function updateClock() {
             const now = new Date();
-            // Use short time format for compactness
             const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
             const date = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
             document.getElementById('clock').textContent = `${date} ${time}`;
@@ -749,6 +781,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        // 1. Create all window elements
         windowsData.forEach(data => {
             const newWindow = createWindowEvent(data);
             const header = newWindow.querySelector('.window-header');
@@ -756,13 +789,16 @@
                 makeDraggable(header);
             }
 
-            // Added event listener for the close button on the new window
+            // Set up close/minimize buttons
             newWindow.querySelector('.window-close').addEventListener('click', () => closeWindow(data.id));
             
-            // Re-center windows after creation (needed because initial CSS was based on center-transform)
-            newWindow.style.transform = 'translate(-50%, -50%)'; 
+            // Re-center windows after creation
+            if (!data.className) {
+                newWindow.style.transform = 'translate(-50%, -50%)'; 
+            }
         });
 
+        // 2. Set up dock item clicks
         dockItems.forEach(item => {
             const windowId = item.dataset.windowId;
             if (windowId) {
@@ -770,27 +806,38 @@
             }
         });
 
+        // 3. Make widgets draggable
         window.onload = () => {
             document.getElementById('welcome-modal').style.display = 'flex';
             
-            // Make widgets draggable (but only on desktop to avoid conflict with scrolling on tablet)
+            // Make widgets draggable (only on desktop)
             if (window.innerWidth > 1024) {
-                 const projectsToolsWidget = document.getElementById('projects-tools-widget');
-                 if(projectsToolsWidget) {
-                     makeDraggable(projectsToolsWidget);
+                 const toolsWidget = document.getElementById('tools-widget');
+                 const projectsWidget = document.getElementById('projects-widget');
+                 const hobbiesWidget = document.querySelector('.widget-feed'); // Using class for the last one
+
+                 // Tool Widget - drag by header
+                 let toolHeader = toolsWidget.querySelector('h1');
+                 if (toolHeader) {
+                    toolHeader.style.cursor = 'grab';
+                    makeDraggable(toolHeader);
+                 }
+                 
+                 // Project Widget - drag by header
+                 let projectHeader = projectsWidget.querySelector('h1');
+                 if (projectHeader) {
+                    projectHeader.style.cursor = 'grab';
+                    makeDraggable(projectHeader);
+                 }
+                 
+                 // Hobbies Widget - drag by header
+                 let hobbyHeader = hobbiesWidget.querySelector('h2');
+                 if (hobbyHeader) {
+                    hobbyHeader.style.cursor = 'grab';
+                    makeDraggable(hobbyHeader);
                  }
             }
         };
-
-        document.querySelector('.welcome-modal-close').addEventListener('click', () => {
-            document.getElementById('welcome-modal').style.display = 'none';
-        });
-        
-        // FIX: Removed the incorrect googleusercontent.com/maps.google.com/0 iframe src and used a standard embed URL for Barcelona
-        const contactIframe = document.querySelector('#contact-window iframe');
-        if(contactIframe) {
-            contactIframe.src = "https://maps.google.com/maps?q=Barcelona&t=&z=10&ie=UTF8&iwloc=&output=embed";
-        }
 
     </script>
 </body>

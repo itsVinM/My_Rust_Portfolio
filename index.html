@@ -37,21 +37,16 @@
             background-position: center;
         }
 
-        /* --- IPAD/TABLET STYLES (Focus on compactness) --- */
+        /* --- MOBILE/TABLET STYLES --- */
         @media (max-width: 1024px) {
             :root {
                 --dock-icon-size: 45px;
-                --widget-width: 90%; 
-                --window-width: 95%; 
+                --window-width: 95%;
                 --window-height: 95%;
             }
 
-            /* Main Dock at the bottom, wider */
             .dock-container {
-                position: absolute;
-                bottom: 10px; /* Lower on mobile */
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: 10px;
                 width: 95%;
                 max-width: 600px;
             }
@@ -62,34 +57,19 @@
                 justify-content: space-around;
             }
 
-            /* Widget Layout for smaller screens: Stacked, Scrollable */
-            .widget-layout {
-                position: absolute;
-                top: 45px; /* Account for smaller clock */
-                left: 0;
-                right: 0;
-                bottom: 80px; /* Space for the dock */
-                padding: 10px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-                overflow-y: auto;
-            }
-            
-            /* Window override for mobile: always full screen and centered */
+            /* Center window on the screen for better tablet experience */
             .window {
-                width: 95% !important;
-                height: 95% !important;
+                width: var(--window-width) !important;
+                height: var(--window-height) !important;
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
             }
-
-            .clock {
-                font-size: 12px;
-                top: 10px;
-                right: 10px;
+            
+            /* Notification Panel is full width on small mobile, fixed width on tablet */
+            .notification-center {
+                width: 100% !important;
+                max-width: 400px;
             }
         }
         
@@ -166,8 +146,8 @@
 
         .window {
             position: absolute;
-            width: 800px; /* Default large size for desktop */
-            height: 500px; /* Default large size for desktop */
+            width: 800px;
+            height: 500px;
             background: rgba(230, 230, 230, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 12px;
@@ -176,14 +156,8 @@
             display: none;
             flex-direction: column;
             z-index: 10;
-            /* Ensure the window starts off-screen until opened and positioned by JS */
-            top: -1000px; 
-            left: -1000px;
-            /* Allow dragging/touching anywhere in the window to activate it */
             touch-action: none;
         }
-        
-        /* The media query above ensures mobile devices override these sizes */
 
         .window-header {
             height: 30px;
@@ -206,7 +180,6 @@
             border-radius: 50%;
             border: 1px solid rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: background-color 0.1s;
         }
 
         .window-close { background-color: #ff5f56; }
@@ -222,77 +195,95 @@
         
         .window-content {
             flex-grow: 1;
-            padding: 0; /* Removing default padding to let inner content control it */
+            padding: 20px;
             color: #333;
             overflow-y: auto;
         }
-
-        .clock {
+        
+        /* TOP BAR COMPONENTS (Clock and New Widget Trigger) */
+        .top-bar-right {
             position: absolute;
             top: 15px;
             right: 15px;
-            color: rgb(255, 255, 255);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .clock {
+            color: white;
             font-size: 14px;
             font-weight: 500;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            z-index: 100;
+        }
+        
+        .widget-trigger {
+            width: 24px;
+            height: 24px;
+            color: white;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .widget-trigger:hover {
+            opacity: 1;
+        }
+
+        /* NOTIFICATION/WIDGET PANEL (Slides in from the right) */
+        .notification-center {
+            position: fixed; /* Use fixed so it covers content */
+            top: 0; 
+            right: 0;
+            bottom: 0;
+            width: 350px; /* Fixed width for the panel */
+            max-height: 100vh;
+            background: rgba(43, 43, 43, 0.85); /* Slightly darker/more opaque */
+            backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5); /* Shadow on the left edge */
+            overflow-y: auto; 
+            display: block; 
+            padding: 15px;
+            z-index: 999;
+            color: white;
+
+            /* Transition and Initial Off-Screen State */
+            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateX(100%); /* Start completely off-screen to the right */
+        }
+
+        .notification-center.open {
+            transform: translateX(0); /* Slide fully into view */
+        }
+        
+        /* Widgets inside the panel are static, not draggable */
+        .widget-panel-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Hide the old widget layout container */
+        .widget-layout {
+            display: none; 
         }
 
         .map-frame {
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 0; /* Removed border radius on iframe */
-        }
-
-        .widget-layout {
-            position: absolute;
-            top: 60px;
-            left: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-right: 15px;
-            /* Allow widgets to be dragged on desktop */
-            touch-action: none; 
-        }
-
-        .widget {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(20px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            color: #ffffff;
-            font-weight: 500;
-            width: var(--widget-width);
-            position: relative; /* Make widgets positionable for dragging */
-            cursor: grab;
+            border-radius: 12px;
         }
         
-        @media (min-width: 1025px) {
-             /* On Desktop, make widgets absolute for free placement */
-            .widget {
-                position: absolute;
-                cursor: grab;
-                transition: none; /* Disable transitions when dragging */
-            }
-            .widget-layout {
-                position: static;
-                display: block;
-                padding: 15px;
-            }
-             /* Initial Desktop Positions for Widgets */
-            #tools-widget { top: 60px; left: 15px; }
-            #projects-widget { top: 60px; left: 320px; }
-            .widget-feed { top: 320px; left: 15px; }
-
-            /* Ensure Experience window starts centered on desktop */
-            .experience-window-size {
-                width: 900px;
-                height: 600px;
-            }
+        /* Other standard styles remain... */
+        .tools-widget .grid-cols-5 {
+             grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        .projects-widget .project-grid {
+             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
         
         .project-item {
@@ -303,27 +294,10 @@
             cursor: pointer;
         }
         
-        .project-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
         .photo-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
-            padding: 20px;
-            overflow-y: auto; /* Allow scrolling inside gallery content */
-        }
-        
-        /* Ensure content in Experience window fills the space */
-        #experience-window .window-content {
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #experience-window h1 {
-            flex-shrink: 0;
             padding: 20px;
         }
 
@@ -335,13 +309,9 @@
             transition: transform 0.2s;
         }
 
-        .photo-item:hover {
-            transform: translateY(-5px);
-        }
-
         .photo-item img {
             width: 100%;
-            height: 120px;
+            height: 150px;
             object-fit: cover;
         }
 
@@ -351,7 +321,7 @@
             font-size: 14px;
             color: #333;
         }
-
+        
         .welcome-modal {
             position: fixed;
             top: 0;

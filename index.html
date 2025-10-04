@@ -37,8 +37,65 @@
             background-position: center;
         }
 
-        /* --- DESKTOP/GENERAL DOCK STYLES: RIGHT SIDE, VERTICAL (FIXED) --- */
+        /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
+        @media (max-width: 500px){
+            :root {
+                --dock-icon-size: 30px; /* Slightly smaller icons */
+                --widget-width: 90%; /* Wider widgets for tablet */
+                --window-width: 95%; /* Larger windows */
+                --window-height: 95%;
+            }
 
+            /* Main Dock at the TOP */
+            .dock-container {
+                top: 10px !important; /* Fixed at top */
+                bottom: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 95%; 
+                max-width: 600px;
+            }
+            
+            .dock {
+                padding: 8px 15px;
+                gap: 10px; /* Reduced gap */
+                justify-content: space-around;
+            }
+
+            /* Widget Layout for smaller screens: centered and spaced */
+            .widget-layout {
+                position: absolute;
+                top: 80px; /* Below the dock */
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+                bottom: auto; 
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 25px; /* More spaced */
+                overflow-y: auto;
+                height: calc(100vh - 90px); /* Fill remaining space */
+                width: 100%;
+            }
+            
+            /* Ensure widgets are full width in the layout */
+            .widget {
+                width: var(--widget-width);
+                max-width: 700px; /* Cap size on wide tablets */
+            }
+
+            /* Center window on the screen */
+            .window {
+                width: var(--window-width) !important;
+                height: var(--window-height) !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+        }
+        
         /* General Dock Container: Fixed to the right, centered vertically */
         .dock-container {
             position: absolute;
@@ -62,7 +119,7 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             align-items: center; /* Center icons within the dock */
         }
-
+        
         /* Widget Layout - Ensure widgets are not under the dock */
         .widget-layout {
             position: absolute;
@@ -76,76 +133,17 @@
             align-items: flex-start;
             gap: 40px;
             padding: 20px;
-            /* Adjusted max-width to leave space for the right-side dock */
-            max-width: calc(90vw - 100px); 
+            max-width: calc(90vw - 100px); /* Slightly less width to avoid dock overlap */
             max-height: 90vh;
             overflow-y: auto;
         }
-        
-        /* General Styles */
-        
-        .dock-item {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .dock-icon {
-            position: relative;
-            width: var(--dock-icon-size);
-            height: var(--dock-icon-size);
-            background-color: #555;
-            border-radius: 12px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .dock-icon:hover {
-            transform: translateY(-8px) scale(1.1);
-            background-color: #666;
-        }
-        
-        .dock-icon-img {
-            width: 70%;
-            height: 70%;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .dock-icon-name {
-            color: white;
-            font-size: 11px; /* Slightly bigger font */
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
-
-        /* Active indicator for vertical dock */
-        .dock-item-active::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 100%; /* Move dot to the right of the icon */
-            transform: translateY(-50%);
-            margin-left: 5px; /* Spacing from icon */
-            margin-top: 0; /* Clear top margin */
-            width: 5px;
-            height: 5px;
-            background-color: white;
-            border-radius: 50%;
-        }
-
 
         /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
         @media (max-width: 500px){
             :root {
-                --dock-icon-size: 30px; /* Slightly smaller icons */
-                --widget-width: 90%; /* Wider widgets for tablet */
-                --window-width: 95%; /* Larger windows */
+                --dock-icon-size: 30px;
+                --widget-width: 90%;
+                --window-width: 95%;
                 --window-height: 95%;
             }
 
@@ -202,6 +200,141 @@
                 transform: translate(-50%, -50%) !important;
             }
         }
+        
+        /* General Styles - Keep dock-item-active style for vertical alignment */
+        .dock-item-active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%; /* Move dot to the right of the icon */
+            transform: translateY(-50%);
+            margin-left: 5px; /* Spacing from icon */
+            margin-top: 0; /* Clear top margin */
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+        }
+                /* General Dock Container: Fixed to the right, centered vertically */
+        .dock-container {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            bottom: auto;
+            right: 20px; /* Fixed distance from the right edge */
+            left: auto;
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            z-index: 1000;
+        }
+
+        .dock {
+            padding: 20px 10px; /* Vertical padding is larger now */
+            background: rgba(43, 43, 43, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 20px; /* Adjust border-radius for vertical shape */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column; /* STACK ICONS VERTICALLY */
+            gap: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            align-items: center; /* Center icons within the dock */
+        }
+        
+        /* Widget Layout - Ensure widgets are not under the dock */
+        .widget-layout {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap; 
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            padding: 20px;
+            max-width: calc(90vw - 100px); /* Slightly less width to avoid dock overlap */
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* --- IPAD-SPECIFIC STYLES (Focus on compactness) --- */
+        @media (max-width: 500px){
+            :root {
+                --dock-icon-size: 30px;
+                --widget-width: 90%;
+                --window-width: 95%;
+                --window-height: 95%;
+            }
+
+            /* Main Dock at the TOP (Revert to original mobile placement) */
+            .dock-container {
+                top: 10px !important;
+                bottom: auto;
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 95%; 
+                max-width: 600px;
+            }
+            
+            .dock {
+                padding: 8px 15px;
+                gap: 10px;
+                justify-content: space-around;
+                flex-direction: row; /* Horizontal for mobile */
+                border-radius: 30px;
+            }
+
+            /* Widget Layout for smaller screens: centered and spaced */
+            .widget-layout {
+                position: absolute;
+                top: 80px; /* Below the dock */
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+                bottom: auto; 
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 25px;
+                overflow-y: auto;
+                height: calc(100vh - 90px);
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* Ensure widgets are full width in the layout */
+            .widget {
+                width: var(--widget-width);
+                max-width: 700px;
+            }
+
+            /* Center window on the screen */
+            .window {
+                width: var(--window-width) !important;
+                height: var(--window-height) !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+        }
+        
+        /* General Styles - Keep dock-item-active style for vertical alignment */
+        .dock-item-active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%; /* Move dot to the right of the icon */
+            transform: translateY(-50%);
+            margin-left: 5px; /* Spacing from icon */
+            margin-top: 0; /* Clear top margin */
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
 
         .window {
             position: absolute;
@@ -289,6 +422,23 @@
             border-radius: 12px;
         }
 
+        /* Widget Layout - Centered and more spaced */
+        .widget-layout {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: row; /* Layout widgets horizontally on desktop */
+            flex-wrap: wrap; /* Allow wrapping if too wide */
+            justify-content: center;
+            align-items: flex-start; /* Align to the top of the container */
+            gap: 40px; /* Increased spacing between widgets */
+            padding: 20px;
+            max-width: 90vw; /* Keep layout contained */
+            max-height: 90vh; /* Keep layout contained */
+            overflow-y: auto; /* Allow scrolling if widgets exceed screen height */
+        }
         
         .widget {
             padding: 20px; /* Increased padding */
